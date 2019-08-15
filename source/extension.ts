@@ -63,8 +63,10 @@ export module FramePhiColors
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
     const colorModeObject = Object.freeze({ "none": null, "hostname": null, "folder": null, });
 
+    const activityBarColorEnabled = new Config("activityBarColorEnabled", true);
     const activityBarBaseColor = new Config("activityBarBaseColor", "#5679C9", colorValidator);
     const activityBarColorMode = new Config<keyof typeof colorModeObject>("activityBarColorMode", "hostname", makeEnumValidator(Object.keys(colorModeObject)));
+    const statusBarColorEnabled = new Config("statusBarColorEnabled", true);
     const statusBarBaseColor = new Config("statusBarBaseColor", "#5679C9", colorValidator);
     const statusBarColorMode = new Config<keyof typeof colorModeObject>("statusBarColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
 
