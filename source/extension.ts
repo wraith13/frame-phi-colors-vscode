@@ -96,14 +96,12 @@ export module FramePhiColors
         source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191)
         %34; // ← 通常、こういうところの数字は素数にすることが望ましいがここについては https://wraith13.github.io/phi-ratio-coloring/phi-ratio-coloring.htm で類似色の出てくる周期をベース(8,13,21,...)に調整すること。
 
+    const getWorkspaceFolderUri = () => vscode.workspace.workspaceFolders && 0 < vscode.workspace.workspaceFolders.length ?
+        vscode.workspace.workspaceFolders[0].uri.toString():
+        null;
     const getHostNameHash = (): number => hash(os.hostname());
-    const getFolderHash = (): number => hash
-    (
-        vscode.workspace.workspaceFolders && 0 < vscode.workspace.workspaceFolders.length ?
-            vscode.workspace.workspaceFolders[0].uri.toString():
-            "null"
-    );
-     const generateColor = (baseColor: string, hash: number) => phiColors.rgbForStyle
+    const getFolderHash = (): number => hash(getWorkspaceFolderUri() || "null");
+    const generateColor = (baseColor: string, hash: number) => phiColors.rgbForStyle
     (
         phiColors.hslaToRgba
         (
