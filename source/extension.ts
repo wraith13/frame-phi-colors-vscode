@@ -60,15 +60,10 @@ export module FramePhiColors
         }
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
-    const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
-    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "folder": null, });
 
-    const activityBarColorEnabled = new Config("activityBarColorEnabled", true);
     const activityBarBaseColor = new Config("activityBarBaseColor", "#5679C9", colorValidator);
-    const activityBarColorMode = new Config<keyof typeof colorModeObject>("activityBarColorMode", "hostname", makeEnumValidator(Object.keys(colorModeObject)));
-    const statusBarColorEnabled = new Config("statusBarColorEnabled", true);
+    const activityBarBadgeBaseColor = new Config("activityBarBadgeBaseColor", "#5679C9", colorValidator);
     const statusBarBaseColor = new Config("statusBarBaseColor", "#5679C9", colorValidator);
-    const statusBarColorMode = new Config<keyof typeof colorModeObject>("statusBarColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
@@ -101,51 +96,59 @@ export module FramePhiColors
         null;
     const getHostNameHash = (): number => hash(os.hostname());
     const getFolderHash = (): number => hash(getWorkspaceFolderUri() || "null");
-    const generateColor = (baseColor: string, hash: number) => phiColors.rgbForStyle
+    const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
     (
-        phiColors.hslaToRgba
-        (
-            phiColors.generate
-            (
-                phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
-                hash,
-                0,
-                0,
-                0
-            )
-        )
+        phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
+        hue,
+        saturation,
+        lightness,
+        0
+    );
+    const generateForegroundColor = (backgroundColor: phiColors.Hsla) => phiColors.generate
+    (
+        backgroundColor,
+        0,
+        0,
+        backgroundColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? 3: -3,
+        0
     );
 
-    const applyColor = (key: string, color: string | null) =>
+    const applyConfig = (key: string, value: string) =>
     {
-        switch(colorMode)
-        {
-        case "none":
-            //removeGlobal;
-            //removeLocal;
-            break;
-        case "hostname":
-            //set Global;
-            //removeLocal;
-            break;
-        case "folder":
-            //removeGlobal;
-            //set Local;
-            break;
-        }
+
+    };
+    const applyColor = (foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
+    {
+        applyConfig(foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor)));
+        applyConfig(backgroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)));
     };
 
     const apply = () =>
     {
+        const hostNameHash = getHostNameHash();
         applyColor
         (
+            "activityBar.foreground",
             "activityBar.background",
-            generateColor(activityBarBaseColor.get(), getHostNameHash())
+            generateBackgroundColor(activityBarBaseColor.get(), hostNameHash, 0, 0)
         );
         applyColor
         (
+            "activityBarBadge.foreground",
+            "activityBarBadge.background",
+            generateBackgroundColor(activityBarBadgeBaseColor.get(), hostNameHash, 0, 0)
+        );
+        applyColor
+        (
+            "statusBar.foreground",
             "statusBar.background",
-            generateColor(statusBarBaseColor.get(), getFolderHash())
+            generateBackgroundColor(statusBarBaseColor.get(), getFolderHash(), 0, 0)
+        );
+        applyColor
+        (
+            "statusBar.noFolderForeground",
+            "statusBar.noFolderBackground",
+            generateBackgroundColor(statusBarBaseColor.get(), 0, -2, -2),
         );
     };
 }
