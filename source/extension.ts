@@ -116,19 +116,7 @@ export module FramePhiColors
         )
     );
 
-    const makeColor = (baseColor: string, colorMode: keyof typeof colorModeObject) =>
-    {
-        switch(colorMode)
-        {
-        case "hostname":
-            return generateColor(baseColor, getHostNameHash());
-        case "folder":
-            return generateColor(baseColor, getFolderHash());
-        }
-        return null;
-    };
-
-    const applyColor = (key: string, colorMode: keyof typeof colorModeObject, color: string | null) =>
+    const applyColor = (key: string, color: string | null) =>
     {
         switch(colorMode)
         {
@@ -149,12 +137,15 @@ export module FramePhiColors
 
     const apply = () =>
     {
-        const activityBarColorModeValue = activityBarColorMode.get();
         applyColor
         (
-            "",
-            activityBarColorModeValue,
-            makeColor(activityBarBaseColor.get(), activityBarColorModeValue)
+            "activityBar.background",
+            generateColor(activityBarBaseColor.get(), getHostNameHash())
+        );
+        applyColor
+        (
+            "statusBar.background",
+            generateColor(statusBarBaseColor.get(), getFolderHash())
         );
     };
 }
