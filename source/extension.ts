@@ -60,10 +60,13 @@ export module FramePhiColors
         }
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
+    const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
+    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "folder": null, });
 
-    const activityBarBaseColor = new Config("activityBarBaseColor", "#5679C9", colorValidator);
-    const activityBarBadgeBaseColor = new Config("activityBarBadgeBaseColor", "#5679C9", colorValidator);
-    const statusBarBaseColor = new Config("statusBarBaseColor", "#5679C9", colorValidator);
+    const titleColorMode = new Config<keyof typeof colorModeObject>("titleColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
+    const activityBarColorMode = new Config<keyof typeof colorModeObject>("activityBarColorMode", "hostname", makeEnumValidator(Object.keys(colorModeObject)));
+    const statusBarColorMode = new Config<keyof typeof colorModeObject>("statusBarColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
+    const baseColor = new Config("baseColor", "#5679C9", colorValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
@@ -119,36 +122,38 @@ export module FramePhiColors
     };
     const applyColor = (foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
     {
-        applyConfig(foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor)));
+        applyConfig(foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))));
         applyConfig(backgroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)));
     };
 
     const apply = () =>
     {
         const hostNameHash = getHostNameHash();
+        const baseColorValue = baseColor.get();
         applyColor
         (
             "activityBar.foreground",
             "activityBar.background",
-            generateBackgroundColor(activityBarBaseColor.get(), hostNameHash, 0, 0)
+            generateBackgroundColor(baseColorValue, hostNameHash, 0, 0)
         );
         applyColor
         (
             "activityBarBadge.foreground",
+            "activityBar.inactiveForeground",
             "activityBarBadge.background",
-            generateBackgroundColor(activityBarBadgeBaseColor.get(), hostNameHash, 0, 0)
+            generateBackgroundColor(baseColorValue, hostNameHash, 0, 0)
         );
         applyColor
         (
             "statusBar.foreground",
             "statusBar.background",
-            generateBackgroundColor(statusBarBaseColor.get(), getFolderHash(), 0, 0)
+            generateBackgroundColor(baseColorValue, getFolderHash(), 0, 0)
         );
         applyColor
         (
             "statusBar.noFolderForeground",
             "statusBar.noFolderBackground",
-            generateBackgroundColor(statusBarBaseColor.get(), 0, -2, -2),
+            generateBackgroundColor(baseColorValue, 0, -2, -2),
         );
     };
 }
