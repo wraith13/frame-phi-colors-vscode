@@ -3,9 +3,18 @@
 	"displayName": "Frame Phi Colors",
 	"description": "This extension colors VS Code's frame.",
 	"version": "0.0.1",
+	"publisher": "wraith13",
 	"license": "SEE LICENSE IN LICENSE_1_0.txt",
 	"engines": {
 		"vscode": "^1.37.0"
+	},
+	"bugs": {
+		"url": "https://github.com/wraith13/frame-phi-colors-vscode/issues"
+	},
+	"homepage": "https://github.com/wraith13/frame-phi-colors-vscode",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wraith13/frame-phi-colors-vscode.git"
 	},
 	"categories": [
 		"Other"
