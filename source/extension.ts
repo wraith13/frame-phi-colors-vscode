@@ -46,31 +46,24 @@ export module FramePhiColors
         }
 
         cache: valueT | undefined;
-        rawGet = (): valueT =>
-        {
-            this.cache = <valueT>vscode.workspace.getConfiguration(applicationKey)[this.name];
-            if (undefined === this.cache)
-            {
-                this.cache = this.defaultValue;
-            }
-            else
-            {
-                this.cache = this.regulate(`${applicationKey}.${this.name}`, this.cache);
-            }
-            return this.cache;
-        }
-
+        rawGet = (): valueT => this.cache = this.regulate
+        (
+            `${applicationKey}.${this.name}`,
+            vscode.workspace.getConfiguration(applicationKey).get(this.name, this.defaultValue)
+        )
         public get = () => undefined !== this.cache ? this.cache: this.rawGet();
         public clear = () => this.cache = undefined;
         public update = () => this.cache !== this.rawGet();
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
-    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "folder": null, });
+    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "workspace": null, "workspace-folder": null, });
+    type colorMode = keyof typeof colorModeObject;
+    const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
-    const titleColorMode = new Config<keyof typeof colorModeObject>("titleColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
-    const activityBarColorMode = new Config<keyof typeof colorModeObject>("activityBarColorMode", "hostname", makeEnumValidator(Object.keys(colorModeObject)));
-    const statusBarColorMode = new Config<keyof typeof colorModeObject>("statusBarColorMode", "folder", makeEnumValidator(Object.keys(colorModeObject)));
+    const titleColorMode = new Config<colorMode>("titleColorMode", "workspace", colorModeValidator);
+    const activityBarColorMode = new Config<colorMode>("activityBarColorMode", "hostname", colorModeValidator);
+    const statusBarColorMode = new Config<colorMode>("statusBarColorMode", "workspace-folder", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
