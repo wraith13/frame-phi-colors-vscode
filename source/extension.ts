@@ -101,7 +101,7 @@ export module FramePhiColors
                             baseColor,
                         ]
                         .map(i => i.update())
-                        .some(i => i)
+                        .reduce((a, b) => a || b)
                     )
                     {
                         apply();
