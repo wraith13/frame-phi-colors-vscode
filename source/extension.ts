@@ -45,19 +45,24 @@ export module FramePhiColors
             return result;
         }
 
-        public get = (): valueT =>
+        cache: valueT | undefined;
+        rawGet = (): valueT =>
         {
-            let result = <valueT>vscode.workspace.getConfiguration(applicationKey)[this.name];
-            if (undefined === result)
+            this.cache = <valueT>vscode.workspace.getConfiguration(applicationKey)[this.name];
+            if (undefined === this.cache)
             {
-                result = this.defaultValue;
+                this.cache = this.defaultValue;
             }
             else
             {
-                result = this.regulate(`${applicationKey}.${this.name}`, result);
+                this.cache = this.regulate(`${applicationKey}.${this.name}`, this.cache);
             }
-            return result;
+            return this.cache;
         }
+
+        public get = () => undefined !== this.cache ? this.cache: this.rawGet();
+        public clear = () => this.cache = undefined;
+        public update = () => this.cache !== this.rawGet();
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
@@ -83,7 +88,26 @@ export module FramePhiColors
             ),
 
             //  イベントリスナーの登録
-            vscode.workspace.onDidChangeConfiguration(() => apply()),
+            vscode.workspace.onDidChangeConfiguration
+            (
+                () =>
+                {
+                    if
+                    (
+                        [
+                            titleColorMode,
+                            activityBarColorMode,
+                            statusBarColorMode,
+                            baseColor,
+                        ]
+                        .map(i => i.update())
+                        .some(i => i)
+                    )
+                    {
+                        apply();
+                    }
+                }
+            ),
             vscode.workspace.onDidChangeWorkspaceFolders(() => apply()),
         );
 
