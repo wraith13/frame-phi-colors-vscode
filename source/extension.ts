@@ -111,11 +111,10 @@ export module FramePhiColors
         source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191)
         %34; // ← 通常、こういうところの数字は素数にすることが望ましいがここについては https://wraith13.github.io/phi-ratio-coloring/phi-ratio-coloring.htm で類似色の出てくる周期をベース(8,13,21,...)に調整すること。
 
-    const getWorkspaceFolderUri = () => vscode.workspace.workspaceFolders && 0 < vscode.workspace.workspaceFolders.length ?
-        vscode.workspace.workspaceFolders[0].uri.toString():
-        null;
+    const getWorkspaceFolderUri = () => workspaceFolder ? workspaceFolder.uri: null;
+    let workspaceFolder: vscode.WorkspaceFolder | undefined;
     const getHostNameHash = (): number => hash(os.hostname());
-    const getFolderHash = (): number => hash(getWorkspaceFolderUri() || "null");
+    const getFolderHash = (): number => hash(`${getWorkspaceFolderUri()}`);
     const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
     (
         phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
@@ -133,28 +132,38 @@ export module FramePhiColors
         0
     );
 
-    const applyConfig = (key: string, value: string) =>
+    const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string) =>
     {
 
     };
-    const applyColor = (foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
+    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
     {
-        applyConfig(foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))));
-        applyConfig(backgroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)));
+        applyConfig(config, mode, foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))));
+        applyConfig(config, mode, backgroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)));
     };
 
     const apply = () =>
     {
+        workspaceFolder = vscode.workspace.workspaceFolders && 0 < vscode.workspace.workspaceFolders.length ?
+            vscode.workspace.workspaceFolders[0]:
+            undefined;
+
+        const config = vscode.workspace.getConfiguration("workbench.colorCustomizations");
+
         const hostNameHash = getHostNameHash();
         const baseColorValue = baseColor.get();
         applyColor
         (
+            config,
+            activityBarColorMode.get(),
             "activityBar.foreground",
             "activityBar.background",
             generateBackgroundColor(baseColorValue, hostNameHash, 0, 0)
         );
         applyColor
         (
+            config,
+            activityBarColorMode.get(),
             "activityBarBadge.foreground",
             "activityBar.inactiveForeground",
             "activityBarBadge.background",
@@ -162,12 +171,16 @@ export module FramePhiColors
         );
         applyColor
         (
+            config,
+            statusBarColorMode.get(),
             "statusBar.foreground",
             "statusBar.background",
             generateBackgroundColor(baseColorValue, getFolderHash(), 0, 0)
         );
         applyColor
         (
+            config,
+            statusBarColorMode.get(),
             "statusBar.noFolderForeground",
             "statusBar.noFolderBackground",
             generateBackgroundColor(baseColorValue, 0, -2, -2),
