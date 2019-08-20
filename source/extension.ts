@@ -117,11 +117,30 @@ export module FramePhiColors
     let currentWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
     const getDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
+    const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
 
     const getHostNameHash = (): number => hash(os.hostname());
     const getWorkspaceHash = (): number => hash(`${getWorkspaceUri()}`);
     const getWorkspaceFolderHash = (): number => hash(`${getWorkspaceFolderUri()}`);
     const getDocumentHash = (): number => hash(`${getDocumentUri()}`);
+    const getHashSourceByMode = (mode: colorMode): uri | string | null =>
+    {
+        switch(mode)
+        {
+        case "none":
+            return null;
+        case "hostname":
+            return os.hostname();
+        case "workspace":
+            return getWorkspaceUri();
+        case "workspace-folder":
+            return getWorkspaceFolderUri();
+        case "document":
+            return getDocumentUri();
+        case "file-type":
+            return getFileType();
+        }
+    };
     const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
     (
         phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
