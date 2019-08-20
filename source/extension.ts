@@ -57,7 +57,7 @@ export module FramePhiColors
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
-    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "workspace": null, "workspace-folder": null, });
+    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "workspace": null, "workspace-folder": null, "document": null, "file-type": null, });
     type colorMode = keyof typeof colorModeObject;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
@@ -102,6 +102,7 @@ export module FramePhiColors
                 }
             ),
             vscode.workspace.onDidChangeWorkspaceFolders(() => apply()),
+            vscode.workspace.onDidChangeTextDocument(() => apply()),
         );
 
         apply();
@@ -111,13 +112,16 @@ export module FramePhiColors
         source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191)
         %34; // ← 通常、こういうところの数字は素数にすることが望ましいがここについては https://wraith13.github.io/phi-ratio-coloring/phi-ratio-coloring.htm で類似色の出てくる周期をベース(8,13,21,...)に調整すること。
 
-    const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
-    const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
     let rootWorkspaceFolder: vscode.WorkspaceFolder | undefined;
+    const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
     let currentWorkspaceFolder: vscode.WorkspaceFolder | undefined;
+    const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
+    const getDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
+
     const getHostNameHash = (): number => hash(os.hostname());
     const getWorkspaceHash = (): number => hash(`${getWorkspaceUri()}`);
     const getWorkspaceFolderHash = (): number => hash(`${getWorkspaceFolderUri()}`);
+    const getDocumentHash = (): number => hash(`${getDocumentUri()}`);
     const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
     (
         phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
@@ -137,7 +141,6 @@ export module FramePhiColors
 
     const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string) =>
     {
-
     };
     const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
     {
