@@ -141,16 +141,18 @@ export module FramePhiColors
             return getFileType();
         }
     };
-    const generateHueIndex = (source : vscode.Uri | string | null) => null === source ? null: hash(`${source}`);
+    const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
     const generateHueIndexByMode = (mode: colorMode) => generateHueIndex(getHashSourceByMode(mode));
-    const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
-    (
-        phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
-        hue,
-        saturation,
-        lightness,
-        0
-    );
+    const generateBackgroundColor = (baseColor: string, hue: number | null, saturation: number, lightness: number) => null !== hue ?
+        phiColors.generate
+        (
+            phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
+            hue,
+            saturation,
+            lightness,
+            0
+        ):
+        null;
     const generateForegroundColor = (backgroundColor: phiColors.Hsla) => phiColors.generate
     (
         backgroundColor,
@@ -160,13 +162,13 @@ export module FramePhiColors
         0
     );
 
-    const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string) =>
+    const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string | undefined) =>
     {
     };
-    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla) =>
+    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla | null) =>
     {
-        applyConfig(config, mode, foregroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))));
-        applyConfig(config, mode, backgroundKey, phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)));
+        applyConfig(config, mode, foregroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))): undefined);
+        applyConfig(config, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
     };
 
     const apply = () =>
