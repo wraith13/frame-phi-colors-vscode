@@ -61,7 +61,7 @@ export module FramePhiColors
     type colorMode = keyof typeof colorModeObject;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
-    const titleColorMode = new Config<colorMode>("titleColorMode", "workspace", colorModeValidator);
+    const titleBarColorMode = new Config<colorMode>("titleColorMode", "workspace", colorModeValidator);
     const activityBarColorMode = new Config<colorMode>("activityBarColorMode", "hostname", colorModeValidator);
     const statusBarColorMode = new Config<colorMode>("statusBarColorMode", "workspace-folder", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
@@ -88,7 +88,7 @@ export module FramePhiColors
                     if
                     (
                         [
-                            titleColorMode,
+                            titleBarColorMode,
                             activityBarColorMode,
                             statusBarColorMode,
                             baseColor,
@@ -123,7 +123,7 @@ export module FramePhiColors
     const getWorkspaceHash = (): number => hash(`${getWorkspaceUri()}`);
     const getWorkspaceFolderHash = (): number => hash(`${getWorkspaceFolderUri()}`);
     const getDocumentHash = (): number => hash(`${getDocumentUri()}`);
-    const getHashSourceByMode = (mode: colorMode): uri | string | null =>
+    const getHashSourceByMode = (mode: colorMode): vscode.Uri | string | null =>
     {
         switch(mode)
         {
@@ -141,6 +141,8 @@ export module FramePhiColors
             return getFileType();
         }
     };
+    const generateHueIndex = (source : vscode.Uri | string | null) => null === source ? null: hash(`${source}`);
+    const generateHueIndexByMode = (mode: colorMode) => generateHueIndex(getHashSourceByMode(mode));
     const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) => phiColors.generate
     (
         phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
@@ -183,15 +185,22 @@ export module FramePhiColors
 
         const config = vscode.workspace.getConfiguration("workbench.colorCustomizations");
 
-        const hostNameHash = getHostNameHash();
         const baseColorValue = baseColor.get();
+        applyColor
+        (
+            config,
+            titleBarColorMode.get(),
+            "titleBar.foreground",
+            "titleBar.background",
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(titleBarColorMode.get()), 0, 0)
+        );
         applyColor
         (
             config,
             activityBarColorMode.get(),
             "activityBar.foreground",
             "activityBar.background",
-            generateBackgroundColor(baseColorValue, hostNameHash, 0, 0)
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()), 0, 0)
         );
         applyColor
         (
@@ -200,7 +209,7 @@ export module FramePhiColors
             "activityBarBadge.foreground",
             "activityBar.inactiveForeground",
             "activityBarBadge.background",
-            generateBackgroundColor(baseColorValue, hostNameHash, 0, 0)
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()) +1.0, 0, 0)
         );
         applyColor
         (
@@ -208,7 +217,7 @@ export module FramePhiColors
             statusBarColorMode.get(),
             "statusBar.foreground",
             "statusBar.background",
-            generateBackgroundColor(baseColorValue, getFolderHash(), 0, 0)
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(statusBarColorMode.get()), 0, 0)
         );
         applyColor
         (
