@@ -119,10 +119,6 @@ export module FramePhiColors
     const getDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
 
-    const getHostNameHash = (): number => hash(os.hostname());
-    const getWorkspaceHash = (): number => hash(`${getWorkspaceUri()}`);
-    const getWorkspaceFolderHash = (): number => hash(`${getWorkspaceFolderUri()}`);
-    const getDocumentHash = (): number => hash(`${getDocumentUri()}`);
     const getHashSourceByMode = (mode: colorMode): vscode.Uri | string | null =>
     {
         switch(mode)
@@ -161,14 +157,77 @@ export module FramePhiColors
         backgroundColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? 3: -3,
         0
     );
-
+    const getConfigurationTarget = (mode: colorMode) =>
+    {
+        switch(mode)
+        {
+        case "none":
+            return null;
+        case "hostname":
+            return vscode.ConfigurationTarget.Global;
+        case "workspace":
+            return vscode.ConfigurationTarget.Workspace;
+        case "workspace-folder":
+            return vscode.ConfigurationTarget.WorkspaceFolder;
+        case "document":
+            return vscode.ConfigurationTarget.WorkspaceFolder;
+        case "file-type":
+            return vscode.ConfigurationTarget.WorkspaceFolder;
+        }
+    };
     const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string | undefined) =>
     {
+        if (value !== config.get(key))
+        {
+            const configurationTarget = getConfigurationTarget(mode);
+            config.update
+            (
+                key,
+                vscode.ConfigurationTarget.Global === configurationTarget ? value: undefined,
+                vscode.ConfigurationTarget.Global
+            );
+            if (rootWorkspaceFolder)
+            {
+                if
+                (
+                    vscode.workspace.workspaceFolders &&
+                    1 < vscode.workspace.workspaceFolders.length &&
+                    vscode.window.activeTextEditor &&
+                    vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
+                )
+                {
+                    config.update
+                    (
+                        key,
+                        vscode.ConfigurationTarget.Workspace === configurationTarget ? value: undefined,
+                        vscode.ConfigurationTarget.Workspace
+                    );
+                    config.update
+                    (
+                        key,
+                        vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined,
+                        vscode.ConfigurationTarget.WorkspaceFolder
+                    );
+                }
+                else
+                {
+                    config.update
+                    (
+                        key,
+                        vscode.ConfigurationTarget.Workspace === configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined,
+                        vscode.ConfigurationTarget.Workspace
+                    );
+                }
+            }
+        }
     };
-    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string, backgroundColor: phiColors.Hsla | null) =>
+    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string | undefined, backgroundColor: phiColors.Hsla | null) =>
     {
         applyConfig(config, mode, foregroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))): undefined);
-        applyConfig(config, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
+        if (backgroundKey)
+        {
+            applyConfig(config, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
+        }
     };
 
     const apply = () =>
@@ -208,11 +267,20 @@ export module FramePhiColors
         (
             config,
             activityBarColorMode.get(),
-            "activityBarBadge.foreground",
             "activityBar.inactiveForeground",
+            undefined,
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()), 0, 0)
+        );
+        /*
+        applyColor
+        (
+            config,
+            activityBarColorMode.get(),
+            "activityBarBadge.foreground",
             "activityBarBadge.background",
             generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()) +1.0, 0, 0)
         );
+        */
         applyColor
         (
             config,
