@@ -175,6 +175,41 @@ export module FramePhiColors
             return vscode.ConfigurationTarget.WorkspaceFolder;
         }
     };
+    const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
+    {
+        switch(configurationTarget)
+        {
+        case vscode.ConfigurationTarget.Global:
+            return undefined;
+        case vscode.ConfigurationTarget.Workspace:
+            return getWorkspaceUri();
+        case vscode.ConfigurationTarget.WorkspaceFolder:
+            return getWorkspaceFolderUri();
+        }
+    };
+    class ConfigBuffer
+    {
+        config: vscode.WorkspaceConfiguration;
+        value: any;
+        constructor(public configurationTarget: vscode.ConfigurationTarget, public key: string)
+        {
+            this.config = vscode.workspace.getConfiguration(undefined, getConfigurationUri(configurationTarget));
+            this.value = this.config.get(key, { });
+        }
+        update = () => this.config.update(this.key, this.value, this.configurationTarget)
+    }
+    class CofigBufferSet
+    {
+        global: ConfigBuffer;
+        workspace: ConfigBuffer;
+        workspaceFolder: ConfigBuffer;
+        constructor(key: string)
+        {
+            this.global = new ConfigBuffer(vscode.ConfigurationTarget.Global, key);
+            this.workspace = new ConfigBuffer(vscode.ConfigurationTarget.Workspace, key);
+            this.workspaceFolder = new ConfigBuffer(vscode.ConfigurationTarget.WorkspaceFolder, key);
+        }
+    }
     const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string | undefined) =>
     {
         if (value !== config.get(key))
