@@ -61,9 +61,9 @@ export module FramePhiColors
     type colorMode = keyof typeof colorModeObject;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
-    const titleBarColorMode = new Config<colorMode>("titleColorMode", "workspace", colorModeValidator);
-    const activityBarColorMode = new Config<colorMode>("activityBarColorMode", "hostname", colorModeValidator);
-    const statusBarColorMode = new Config<colorMode>("statusBarColorMode", "workspace-folder", colorModeValidator);
+    const titleBarColorMode = new Config<colorMode>("titleColorMode", "hostname", colorModeValidator);
+    const activityBarColorMode = new Config<colorMode>("activityBarColorMode", "workspace", colorModeValidator);
+    const statusBarColorMode = new Config<colorMode>("statusBarColorMode", "document", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
@@ -265,6 +265,7 @@ export module FramePhiColors
             applyConfig(configBufferSet, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
         }
     };
+    const ifExist = <sourceType,resultType>(source: sourceType | null, method: (source: sourceType)=>resultType): resultType | null => null === source ? null: method(source);
 
     const apply = () =>
     {
@@ -306,7 +307,7 @@ export module FramePhiColors
             activityBarColorMode.get(),
             "activityBar.inactiveForeground",
             undefined,
-            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()), 0, 0)
+            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()), -1.0, -1.0)
         );
         /*
         applyColor
@@ -315,7 +316,7 @@ export module FramePhiColors
             activityBarColorMode.get(),
             "activityBarBadge.foreground",
             "activityBarBadge.background",
-            generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()) +1.0, 0, 0)
+            generateBackgroundColor(baseColorValue, ifExist(generateHueIndexByMode(activityBarColorMode.get()), x => x +0.2), 0.5, 0.5)
         );
         */
         applyColor
