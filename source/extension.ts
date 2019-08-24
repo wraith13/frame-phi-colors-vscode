@@ -102,7 +102,7 @@ export module FramePhiColors
                 }
             ),
             vscode.workspace.onDidChangeWorkspaceFolders(() => apply()),
-            vscode.workspace.onDidChangeTextDocument(() => apply()),
+            vscode.window.onDidChangeActiveTextEditor(() => apply()),
         );
 
         apply();
@@ -194,35 +194,27 @@ export module FramePhiColors
         constructor(public configurationTarget: vscode.ConfigurationTarget, public key: string)
         {
             this.config = vscode.workspace.getConfiguration(undefined, getConfigurationUri(configurationTarget));
-            this.value = this.config.get(key, { });
+            this.value = this.config.get(this.key, { });
         }
-        update = () => this.config.update(this.key, this.value, this.configurationTarget)
+        update = () =>
+        {
+            if (JSON.stringify(this.config.get(this.key, { })) !== JSON.stringify(this.value))
+            {
+                this.config.update(this.key, this.value, this.configurationTarget);
+            }
+        }
     }
-    class CofigBufferSet
+    class ConfigBufferSet
     {
         global: ConfigBuffer;
-        workspace: ConfigBuffer;
-        workspaceFolder: ConfigBuffer;
+        workspace: ConfigBuffer | undefined;
+        workspaceFolder: ConfigBuffer | undefined;
         constructor(key: string)
         {
             this.global = new ConfigBuffer(vscode.ConfigurationTarget.Global, key);
-            this.workspace = new ConfigBuffer(vscode.ConfigurationTarget.Workspace, key);
-            this.workspaceFolder = new ConfigBuffer(vscode.ConfigurationTarget.WorkspaceFolder, key);
-        }
-    }
-    const applyConfig = (config: vscode.WorkspaceConfiguration, mode: colorMode, key: string, value: string | undefined) =>
-    {
-        if (value !== config.get(key))
-        {
-            const configurationTarget = getConfigurationTarget(mode);
-            config.update
-            (
-                key,
-                vscode.ConfigurationTarget.Global === configurationTarget ? value: undefined,
-                vscode.ConfigurationTarget.Global
-            );
             if (rootWorkspaceFolder)
             {
+                this.workspace = new ConfigBuffer(vscode.ConfigurationTarget.Workspace, key);
                 if
                 (
                     vscode.workspace.workspaceFolders &&
@@ -231,37 +223,46 @@ export module FramePhiColors
                     vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri)
                 )
                 {
-                    config.update
-                    (
-                        key,
-                        vscode.ConfigurationTarget.Workspace === configurationTarget ? value: undefined,
-                        vscode.ConfigurationTarget.Workspace
-                    );
-                    config.update
-                    (
-                        key,
-                        vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined,
-                        vscode.ConfigurationTarget.WorkspaceFolder
-                    );
-                }
-                else
-                {
-                    config.update
-                    (
-                        key,
-                        vscode.ConfigurationTarget.Workspace === configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined,
-                        vscode.ConfigurationTarget.Workspace
-                    );
+                    this.workspaceFolder = new ConfigBuffer(vscode.ConfigurationTarget.WorkspaceFolder, key);
                 }
             }
         }
-    };
-    const applyColor = (config: vscode.WorkspaceConfiguration, mode: colorMode, foregroundKey: string, backgroundKey: string | undefined, backgroundColor: phiColors.Hsla | null) =>
+        update = () =>
+        {
+            this.global.update();
+            if (this.workspace)
+            {
+                this.workspace.update();
+            }
+            if (this.workspaceFolder)
+            {
+                this.workspaceFolder.update();
+            }
+        }
+    }
+    const applyConfig = (configBufferSet: ConfigBufferSet, mode: colorMode, key: string, value: string | undefined) =>
     {
-        applyConfig(config, mode, foregroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))): undefined);
+        const configurationTarget = getConfigurationTarget(mode);
+        configBufferSet.global.value[key] = vscode.ConfigurationTarget.Global === configurationTarget ? value: undefined;
+        if (configBufferSet.workspace)
+        {
+            if (configBufferSet.workspaceFolder)
+            {
+                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === configurationTarget ? value: undefined;
+                configBufferSet.workspaceFolder.value[key] = vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined;
+            }
+            else
+            {
+                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined;
+            }
+        }
+    };
+    const applyColor = (configBufferSet: ConfigBufferSet, mode: colorMode, foregroundKey: string, backgroundKey: string | undefined, backgroundColor: phiColors.Hsla | null) =>
+    {
+        applyConfig(configBufferSet, mode, foregroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(generateForegroundColor(backgroundColor))): undefined);
         if (backgroundKey)
         {
-            applyConfig(config, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
+            applyConfig(configBufferSet, mode, backgroundKey, null !== backgroundColor ? phiColors.rgbForStyle(phiColors.hslaToRgba(backgroundColor)): undefined);
         }
     };
 
@@ -280,11 +281,12 @@ export module FramePhiColors
             || rootWorkspaceFolder;
 
         const config = vscode.workspace.getConfiguration("workbench.colorCustomizations");
+        const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
 
         const baseColorValue = baseColor.get();
         applyColor
         (
-            config,
+            configBufferSet,
             titleBarColorMode.get(),
             "titleBar.foreground",
             "titleBar.background",
@@ -292,7 +294,7 @@ export module FramePhiColors
         );
         applyColor
         (
-            config,
+            configBufferSet,
             activityBarColorMode.get(),
             "activityBar.foreground",
             "activityBar.background",
@@ -300,7 +302,7 @@ export module FramePhiColors
         );
         applyColor
         (
-            config,
+            configBufferSet,
             activityBarColorMode.get(),
             "activityBar.inactiveForeground",
             undefined,
@@ -318,7 +320,7 @@ export module FramePhiColors
         */
         applyColor
         (
-            config,
+            configBufferSet,
             statusBarColorMode.get(),
             "statusBar.foreground",
             "statusBar.background",
@@ -326,7 +328,7 @@ export module FramePhiColors
         );
         applyColor
         (
-            config,
+            configBufferSet,
             statusBarColorMode.get(),
             "statusBar.noFolderForeground",
             "statusBar.noFolderBackground",
