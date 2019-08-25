@@ -333,6 +333,7 @@ export module FramePhiColors
             "statusBar.noFolderBackground",
             generateBackgroundColor(baseColorValue, 0, -2, -2),
         );
+        configBufferSet.update();
     };
 }
 
