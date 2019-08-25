@@ -309,16 +309,14 @@ export module FramePhiColors
             undefined,
             generateBackgroundColor(baseColorValue, generateHueIndexByMode(activityBarColorMode.get()), -1.0, -1.0)
         );
-        /*
         applyColor
         (
-            config,
+            configBufferSet,
             activityBarColorMode.get(),
             "activityBarBadge.foreground",
             "activityBarBadge.background",
             generateBackgroundColor(baseColorValue, ifExist(generateHueIndexByMode(activityBarColorMode.get()), x => x +0.2), 0.5, 0.5)
         );
-        */
         applyColor
         (
             configBufferSet,
