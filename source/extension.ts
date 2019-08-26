@@ -200,7 +200,9 @@ export module FramePhiColors
             if (JSON.stringify(this.config.get(this.key, { })) !== JSON.stringify(this.value))
             {
                 this.config.update(this.key, this.value, this.configurationTarget);
+                return true;
             }
+            return false;
         }
     }
     class ConfigBufferSet
@@ -227,17 +229,9 @@ export module FramePhiColors
             }
         }
         update = () =>
-        {
-            this.global.update();
-            if (this.workspace)
-            {
-                this.workspace.update();
-            }
-            if (this.workspaceFolder)
-            {
-                this.workspaceFolder.update();
-            }
-        }
+            this.global.update() ||
+            (this.workspace && this.workspace.update()) ||
+            (this.workspaceFolder && this.workspaceFolder.update())
     }
     const applyConfig = (configBufferSet: ConfigBufferSet, mode: colorMode, key: string, value: string | undefined) =>
     {
@@ -348,7 +342,10 @@ export module FramePhiColors
                 new ColorSource("statusBar.noFolderBackground", 0, -2, -2),
             ]
         );
-        configBufferSet.update();
+        if (configBufferSet.update())
+        {
+            console.log('🌈 applyed frame-phi-colors!!!');
+        }
     };
 }
 
