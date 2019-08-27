@@ -252,34 +252,26 @@ export module FramePhiColors
     };
     class ColorSource
     {
-        constructor(public key: string, public hue: number | null, public saturation: number, public lightness: number, public arranger: (source: phiColors.Hsla)=> phiColors.Hsla = x => x)
+        public color: phiColors.Hsla | null;
+        constructor(public key: string, hue: number | null, saturation: number, lightness: number, arranger: (source: phiColors.Hsla)=> phiColors.Hsla = x => x)
         {
-
-        }
-        generateColor = () => this.hue ?
-            this.arranger
-            (
-                generateBackgroundColor
+            this.color = hue ?
+                arranger
                 (
-                    baseColor.get(),
-                    this.hue,
-                    this.saturation,
-                    this.lightness
-                )
-            ):
-            null
+                    generateBackgroundColor
+                    (
+                        baseColor.get(),
+                        hue,
+                        saturation,
+                        lightness
+                    )
+                ):
+                null;
+        }
     }
     const applyColor = (configBufferSet: ConfigBufferSet, mode: colorMode, colorList: ColorSource[]) =>
     {
         colorList
-        .map
-        (
-            source =>
-            ({
-                key: source.key,
-                color: source.generateColor(),
-            })
-        )
         .forEach
         (
             source => applyConfig
