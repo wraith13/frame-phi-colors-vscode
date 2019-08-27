@@ -229,9 +229,9 @@ export module FramePhiColors
             }
         }
         update = () =>
-            this.global.update() ||
-            (this.workspace && this.workspace.update()) ||
-            (this.workspaceFolder && this.workspaceFolder.update())
+            0 < (this.global.update() ? 0: 1)
+                +((this.workspace && this.workspace.update()) ? 0: 1)
+                +((this.workspaceFolder && this.workspaceFolder.update()) ? 0: 1)
     }
     const applyConfig = (configBufferSet: ConfigBufferSet, mode: colorMode, key: string, value: string | undefined) =>
     {
