@@ -267,6 +267,12 @@ export module FramePhiColors
             )
         );
     };
+    const getModeAndHash = (config: Config<colorMode>) =>
+    {
+        const mode = config.get();
+        const hash = generateHueIndexByMode(mode);
+        return { mode, hash };
+    };
 
     const apply = () =>
     {
@@ -283,40 +289,37 @@ export module FramePhiColors
             || rootWorkspaceFolder;
 
         const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
-        const titleBarColorModeValue = titleBarColorMode.get();
-        const titleBarColorHash = generateHueIndexByMode(titleBarColorModeValue);
+        const titleBarColor = getModeAndHash(titleBarColorMode);
         applyColor
         (
             configBufferSet,
-            titleBarColorModeValue,
+            titleBarColor.mode,
             [
-                new ColorSource("titleBar.foreground", titleBarColorHash ? [makeArranger(titleBarColorHash), generateForegroundColor]: null),
-                new ColorSource("titleBar.background", titleBarColorHash ? [makeArranger(titleBarColorHash)]: null),
+                new ColorSource("titleBar.foreground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), generateForegroundColor]: null),
+                new ColorSource("titleBar.background", titleBarColor.hash ? [makeArranger(titleBarColor.hash)]: null),
             ]
         );
-        const activityBarColorModeValue = activityBarColorMode.get();
-        const activityBarColorHash = generateHueIndexByMode(activityBarColorModeValue);
+        const activityBarColor = getModeAndHash(activityBarColorMode);
         applyColor
         (
             configBufferSet,
-            activityBarColorModeValue,
+            activityBarColor.mode,
             [
-                new ColorSource("activityBar.foreground", activityBarColorHash ? [makeArranger(activityBarColorHash), generateForegroundColor]: null),
-                new ColorSource("activityBar.background", activityBarColorHash ? [makeArranger(activityBarColorHash)]: null),
-                new ColorSource("activityBar.inactiveForeground", activityBarColorHash ? [makeArranger(activityBarColorHash, -1.0, -1.0), generateForegroundColor]: null),
-                new ColorSource("activityBarBadge.foreground", activityBarColorHash ? [makeArranger(activityBarColorHash +0.2, 0.5, 0.5), generateForegroundColor]: null),
-                new ColorSource("activityBarBadge.background", activityBarColorHash ? [makeArranger(activityBarColorHash +0.2, 0.5, 0.5)]: null),
+                new ColorSource("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor]: null),
+                new ColorSource("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash)]: null),
+                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash, -1.0, -1.0), generateForegroundColor]: null),
+                new ColorSource("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5), generateForegroundColor]: null),
+                new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5)]: null),
             ]
         );
-        const statusBarColorModeValue = statusBarColorMode.get();
-        const statusBarColorHash = generateHueIndexByMode(statusBarColorModeValue);
+        const statusBarColor = getModeAndHash(statusBarColorMode);
         applyColor
         (
             configBufferSet,
-            statusBarColorModeValue,
+            statusBarColor.mode,
             [
-                new ColorSource("statusBar.foreground", statusBarColorHash ? [makeArranger(statusBarColorHash), generateForegroundColor]: null),
-                new ColorSource("statusBar.background", statusBarColorHash ? [makeArranger(statusBarColorHash)]: null),
+                new ColorSource("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), generateForegroundColor]: null),
+                new ColorSource("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash)]: null),
                 new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, -2), generateForegroundColor]),
                 new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, -2)]),
             ]
