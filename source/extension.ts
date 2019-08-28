@@ -137,17 +137,10 @@ export module FramePhiColors
             return getFileType();
         }
     };
+    const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
     const generateHueIndexByMode = (mode: colorMode) => generateHueIndex(getHashSourceByMode(mode));
-    const generateBackgroundColor = (baseColor: string, hue: number, saturation: number, lightness: number) =>
-        phiColors.generate
-        (
-            phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor)),
-            hue,
-            saturation,
-            lightness,
-            0
-        );
+    const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0) => (baseColor: phiColors.Hsla) => phiColors.generate(baseColor, hue, saturation, lightness, 0);
     const generateForegroundColor = (backgroundColor: phiColors.Hsla) => phiColors.generate
     (
         backgroundColor,
@@ -253,20 +246,9 @@ export module FramePhiColors
     class ColorSource
     {
         public color: phiColors.Hsla | null;
-        constructor(public key: string, hue: number | null, saturation: number, lightness: number, arranger: (source: phiColors.Hsla)=> phiColors.Hsla = x => x)
+        constructor(public key: string, arrangers: ((source: phiColors.Hsla)=> phiColors.Hsla)[] | null)
         {
-            this.color = hue ?
-                arranger
-                (
-                    generateBackgroundColor
-                    (
-                        baseColor.get(),
-                        hue,
-                        saturation,
-                        lightness
-                    )
-                ):
-                null;
+            this.color = arrangers ? arrangers.reduce((v, i) => i(v), getBaseColor()): null;
         }
     }
     const applyColor = (configBufferSet: ConfigBufferSet, mode: colorMode, colorList: ColorSource[]) =>
@@ -285,7 +267,6 @@ export module FramePhiColors
             )
         );
     };
-    const ifExist = <sourceType,resultType>(source: sourceType | null, method: (source: sourceType)=>resultType): resultType | null => null === source ? null: method(source);
 
     const apply = () =>
     {
@@ -302,36 +283,42 @@ export module FramePhiColors
             || rootWorkspaceFolder;
 
         const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
+        const titleBarColorModeValue = titleBarColorMode.get();
+        const titleBarColorHash = generateHueIndexByMode(titleBarColorModeValue);
         applyColor
         (
             configBufferSet,
-            titleBarColorMode.get(),
+            titleBarColorModeValue,
             [
-                new ColorSource("titleBar.foreground", generateHueIndexByMode(titleBarColorMode.get()), 0, 0, generateForegroundColor),
-                new ColorSource("titleBar.background", generateHueIndexByMode(titleBarColorMode.get()), 0, 0),
+                new ColorSource("titleBar.foreground", titleBarColorHash ? [makeArranger(titleBarColorHash), generateForegroundColor]: null),
+                new ColorSource("titleBar.background", titleBarColorHash ? [makeArranger(titleBarColorHash)]: null),
             ]
         );
+        const activityBarColorModeValue = activityBarColorMode.get();
+        const activityBarColorHash = generateHueIndexByMode(activityBarColorModeValue);
         applyColor
         (
             configBufferSet,
-            activityBarColorMode.get(),
+            activityBarColorModeValue,
             [
-                new ColorSource("activityBar.foreground", generateHueIndexByMode(activityBarColorMode.get()), 0, 0, generateForegroundColor),
-                new ColorSource("activityBar.background", generateHueIndexByMode(activityBarColorMode.get()), 0, 0),
-                new ColorSource("activityBar.inactiveForeground", generateHueIndexByMode(activityBarColorMode.get()), -1.0, -1.0, generateForegroundColor),
-                new ColorSource("activityBarBadge.foreground", ifExist(generateHueIndexByMode(activityBarColorMode.get()), x => x +0.2), 0.5, 0.5, generateForegroundColor),
-                new ColorSource("activityBarBadge.background", ifExist(generateHueIndexByMode(activityBarColorMode.get()), x => x +0.2), 0.5, 0.5),
+                new ColorSource("activityBar.foreground", activityBarColorHash ? [makeArranger(activityBarColorHash), generateForegroundColor]: null),
+                new ColorSource("activityBar.background", activityBarColorHash ? [makeArranger(activityBarColorHash)]: null),
+                new ColorSource("activityBar.inactiveForeground", activityBarColorHash ? [makeArranger(activityBarColorHash, -1.0, -1.0), generateForegroundColor]: null),
+                new ColorSource("activityBarBadge.foreground", activityBarColorHash ? [makeArranger(activityBarColorHash +0.2, 0.5, 0.5), generateForegroundColor]: null),
+                new ColorSource("activityBarBadge.background", activityBarColorHash ? [makeArranger(activityBarColorHash +0.2, 0.5, 0.5)]: null),
             ]
         );
+        const statusBarColorModeValue = statusBarColorMode.get();
+        const statusBarColorHash = generateHueIndexByMode(statusBarColorModeValue);
         applyColor
         (
             configBufferSet,
-            statusBarColorMode.get(),
+            statusBarColorModeValue,
             [
-                new ColorSource("statusBar.foreground", generateHueIndexByMode(statusBarColorMode.get()), 0, 0, generateForegroundColor),
-                new ColorSource("statusBar.background", generateHueIndexByMode(statusBarColorMode.get()), 0, 0),
-                new ColorSource("statusBar.noFolderForeground", 0, -2, -2, generateForegroundColor),
-                new ColorSource("statusBar.noFolderBackground", 0, -2, -2),
+                new ColorSource("statusBar.foreground", statusBarColorHash ? [makeArranger(statusBarColorHash), generateForegroundColor]: null),
+                new ColorSource("statusBar.background", statusBarColorHash ? [makeArranger(statusBarColorHash)]: null),
+                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, -2), generateForegroundColor]),
+                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, -2)]),
             ]
         );
         if (configBufferSet.update())
