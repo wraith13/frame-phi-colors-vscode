@@ -155,15 +155,15 @@ export module FramePhiColors
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
     const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
-    const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0) => (baseColor: phiColors.Hsla) => phiColors.generate(baseColor, hue, saturation, lightness, 0);
-    const generateForegroundColor = (backgroundColor: phiColors.Hsla) => phiColors.generate
+    const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0) => (baseColor: phiColors.Hsla) => phiColors.generate
     (
-        backgroundColor,
-        0,
-        0,
-        backgroundColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? 3: -3,
+        baseColor,
+        hue,
+        saturation,
+        baseColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? lightness: -lightness,
         0
     );
+    const generateForegroundColor = makeArranger(0, 0, 3);
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
     {
         switch(configurationTarget)
@@ -303,7 +303,7 @@ export module FramePhiColors
             [
                 new ColorSource("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor]: null),
                 new ColorSource("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash)]: null),
-                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash, -1.0, -1.0), generateForegroundColor]: null),
+                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor, makeArranger(0, -2, 2)]: null),
                 new ColorSource("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5), generateForegroundColor]: null),
                 new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5)]: null),
             ]
@@ -316,8 +316,8 @@ export module FramePhiColors
             [
                 new ColorSource("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), generateForegroundColor]: null),
                 new ColorSource("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash)]: null),
-                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, -2), generateForegroundColor]),
-                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, -2)]),
+                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, 2), generateForegroundColor]),
+                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, 2)]),
             ]
         );
         if (configBufferSet.update())
