@@ -59,11 +59,40 @@ export module FramePhiColors
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
     const colorModeObject = Object.freeze({ "none": null, "hostname": null, "workspace": null, "workspace-folder": null, "document": null, "file-type": null, });
     type colorMode = keyof typeof colorModeObject;
+        {
+            getHashSource: () => os.hostname(),
+            configurationTarget: vscode.ConfigurationTarget.Global,
+        },
+        "workspace":
+        {
+            getHashSource: () => getWorkspaceUri(),
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
+        },
+        "workspace-folder":
+        {
+            getHashSource: () => getWorkspaceFolderUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+        },
+        "document":
+        {
+            getHashSource: () => getDocumentUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+        },
+        "file-type":
+        {
+            getHashSource: () => getFileType(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+        },
+    });
+
+    type ColorModeKey = keyof typeof colorModeObject;
+    type ValueOf<T> = T[keyof T];
+    type ColorMode = ValueOf<typeof colorModeObject>;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
-    const titleBarColorMode = new Config<colorMode>("titleColorMode", "hostname", colorModeValidator);
-    const activityBarColorMode = new Config<colorMode>("activityBarColorMode", "workspace", colorModeValidator);
-    const statusBarColorMode = new Config<colorMode>("statusBarColorMode", "document", colorModeValidator);
+    const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "hostname", colorModeValidator);
+    const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "workspace", colorModeValidator);
+    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "document", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
@@ -118,28 +147,8 @@ export module FramePhiColors
     const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
     const getDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
-
-    const getHashSourceByMode = (mode: colorMode): vscode.Uri | string | null =>
-    {
-        switch(mode)
-        {
-        case "none":
-            return null;
-        case "hostname":
-            return os.hostname();
-        case "workspace":
-            return getWorkspaceUri();
-        case "workspace-folder":
-            return getWorkspaceFolderUri();
-        case "document":
-            return getDocumentUri();
-        case "file-type":
-            return getFileType();
-        }
-    };
     const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
-    const generateHueIndexByMode = (mode: colorMode) => generateHueIndex(getHashSourceByMode(mode));
     const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0) => (baseColor: phiColors.Hsla) => phiColors.generate(baseColor, hue, saturation, lightness, 0);
     const generateForegroundColor = (backgroundColor: phiColors.Hsla) => phiColors.generate
     (
@@ -149,24 +158,6 @@ export module FramePhiColors
         backgroundColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? 3: -3,
         0
     );
-    const getConfigurationTarget = (mode: colorMode) =>
-    {
-        switch(mode)
-        {
-        case "none":
-            return null;
-        case "hostname":
-            return vscode.ConfigurationTarget.Global;
-        case "workspace":
-            return vscode.ConfigurationTarget.Workspace;
-        case "workspace-folder":
-            return vscode.ConfigurationTarget.WorkspaceFolder;
-        case "document":
-            return vscode.ConfigurationTarget.WorkspaceFolder;
-        case "file-type":
-            return vscode.ConfigurationTarget.WorkspaceFolder;
-        }
-    };
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
     {
         switch(configurationTarget)
@@ -226,20 +217,19 @@ export module FramePhiColors
                 +((this.workspace && this.workspace.update()) ? 0: 1)
                 +((this.workspaceFolder && this.workspaceFolder.update()) ? 0: 1)
     }
-    const applyConfig = (configBufferSet: ConfigBufferSet, mode: colorMode, key: string, value: string | undefined) =>
+    const applyConfig = (configBufferSet: ConfigBufferSet, mode: ColorMode, key: string, value: string | undefined) =>
     {
-        const configurationTarget = getConfigurationTarget(mode);
-        configBufferSet.global.value[key] = vscode.ConfigurationTarget.Global === configurationTarget ? value: undefined;
+        configBufferSet.global.value[key] = vscode.ConfigurationTarget.Global === mode.configurationTarget ? value: undefined;
         if (configBufferSet.workspace)
         {
             if (configBufferSet.workspaceFolder)
             {
-                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === configurationTarget ? value: undefined;
-                configBufferSet.workspaceFolder.value[key] = vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined;
+                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === mode.configurationTarget ? value: undefined;
+                configBufferSet.workspaceFolder.value[key] = vscode.ConfigurationTarget.WorkspaceFolder === mode.configurationTarget ? value: undefined;
             }
             else
             {
-                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === configurationTarget ? value: undefined;
+                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === mode.configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === mode.configurationTarget ? value: undefined;
             }
         }
     };
@@ -251,7 +241,7 @@ export module FramePhiColors
             this.color = arrangers ? arrangers.reduce((v, i) => i(v), getBaseColor()): null;
         }
     }
-    const applyColor = (configBufferSet: ConfigBufferSet, mode: colorMode, colorList: ColorSource[]) =>
+    const applyColor = (configBufferSet: ConfigBufferSet, mode: ColorMode, colorList: ColorSource[]) =>
     {
         colorList
         .forEach
@@ -267,10 +257,10 @@ export module FramePhiColors
             )
         );
     };
-    const getModeAndHash = (config: Config<colorMode>) =>
+    const getModeAndHash = (config: Config<ColorModeKey>) =>
     {
-        const mode = config.get();
-        const hash = generateHueIndexByMode(mode);
+        const mode = colorModeObject[config.get()];
+        const hash = generateHueIndex(mode.getHashSource());
         return { mode, hash };
     };
 
