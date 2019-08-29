@@ -57,8 +57,14 @@ export module FramePhiColors
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
-    const colorModeObject = Object.freeze({ "none": null, "hostname": null, "workspace": null, "workspace-folder": null, "document": null, "file-type": null, });
-    type colorMode = keyof typeof colorModeObject;
+    const colorModeObject = Object.freeze
+    ({
+        "none":
+        {
+            getHashSource: () => null,
+            configurationTarget: null,
+        },
+        "hostname":
         {
             getHashSource: () => os.hostname(),
             configurationTarget: vscode.ConfigurationTarget.Global,
