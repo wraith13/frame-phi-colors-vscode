@@ -79,6 +79,11 @@ export module FramePhiColors
             getHashSource: () => getWorkspaceFolderUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
         },
+        "document-fullpath":
+        {
+            getHashSource: () => getDocumentUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+        },
         "document":
         {
             getHashSource: () =>
