@@ -172,8 +172,9 @@ export module FramePhiColors
         baseColor,
         hue,
         saturation,
-        baseColor.l < (phiColors.HslHMin +phiColors.HslLMax) /2 ? lightness: -lightness,
-        0
+        (getBaseColor().l -phiColors.HslLMin) < ((phiColors.HslLMax -phiColors.HslLMin) *0.5) ? lightness: -lightness,
+        0,
+        true
     );
     const generateForegroundColor = makeArranger(0, 0, 3);
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
