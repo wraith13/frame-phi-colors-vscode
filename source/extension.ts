@@ -102,6 +102,19 @@ export module FramePhiColors
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
         },
     });
+    const foregroundColorModeObject = Object.freeze
+    ({
+        "auto": (baseColor: phiColors.Hsla) =>
+        {
+            const lightness = (baseColor.l -phiColors.HslLMin) / (phiColors.HslLMax -phiColors.HslLMin);
+            const isLight = 0.5 <= lightness;
+            const isTooLight = 0.8 <= lightness;
+            const isTooDark = lightness <= 0.3;
+            return isTooDark || (isLight && !isTooLight) ? 1: -1;
+        },
+        "white": (_baseColor: phiColors.Hsla) => 1,
+        "black": (_baseColor: phiColors.Hsla) => -1,
+    });
 
     type ColorModeKey = keyof typeof colorModeObject;
     type ValueOf<T> = T[keyof T];
@@ -112,6 +125,7 @@ export module FramePhiColors
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "workspace", colorModeValidator);
     const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "document", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
+    const foregroundColorMode = new Config<keyof typeof foregroundColorModeObject>("foregroundColorMode", "auto", makeEnumValidator(Object.keys(foregroundColorModeObject)));
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
@@ -139,6 +153,7 @@ export module FramePhiColors
                             activityBarColorMode,
                             statusBarColorMode,
                             baseColor,
+                            foregroundColorMode,
                         ]
                         .map(i => i.update())
                         .reduce((a, b) => a || b)
@@ -172,11 +187,10 @@ export module FramePhiColors
         baseColor,
         hue,
         saturation,
-        (getBaseColor().l -phiColors.HslLMin) < ((phiColors.HslLMax -phiColors.HslLMin) *0.5) ? lightness: -lightness,
+        lightness,
         0,
         true
     );
-    const generateForegroundColor = makeArranger(0, 0, 3);
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
     {
         switch(configurationTarget)
@@ -297,6 +311,8 @@ export module FramePhiColors
             )
             || rootWorkspaceFolder;
 
+        const foregroundDirection = foregroundColorModeObject[foregroundColorMode.get()](getBaseColor());
+        const generateForegroundColor = makeArranger(0, 0, foregroundDirection *5);
         const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
         const titleBarColor = getModeAndHash(titleBarColorMode);
         applyColor
@@ -316,9 +332,9 @@ export module FramePhiColors
             [
                 new ColorSource("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor]: null),
                 new ColorSource("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash)]: null),
-                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor, makeArranger(0, -2, 2)]: null),
-                new ColorSource("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5), generateForegroundColor]: null),
-                new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 0.5)]: null),
+                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), makeArranger(0, 1, foregroundDirection)]: null),
+                new ColorSource("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), generateForegroundColor]: null),
+                new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0)]: null),
             ]
         );
         const statusBarColor = getModeAndHash(statusBarColorMode);
@@ -329,8 +345,9 @@ export module FramePhiColors
             [
                 new ColorSource("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), generateForegroundColor]: null),
                 new ColorSource("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash)]: null),
-                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, 2), generateForegroundColor]),
-                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, 2)]),
+                new ColorSource("statusBarItem.hoverBackground", statusBarColor.hash ? [makeArranger(statusBarColor.hash, 0, foregroundDirection *-2)]: null),
+                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, foregroundDirection *-2), generateForegroundColor]),
+                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, foregroundDirection *-2)]),
             ]
         );
         if (configBufferSet.update())
