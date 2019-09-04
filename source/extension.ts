@@ -112,8 +112,8 @@ export module FramePhiColors
             const isTooDark = lightness <= 0.3;
             return isTooDark || (isLight && !isTooLight) ? 1: -1;
         },
-        "white": (_baseColor: phiColors.Hsla) => 1,
-        "black": (_baseColor: phiColors.Hsla) => -1,
+        "light": (_baseColor: phiColors.Hsla) => 1,
+        "dark": (_baseColor: phiColors.Hsla) => -1,
     });
 
     type ColorModeKey = keyof typeof colorModeObject;
