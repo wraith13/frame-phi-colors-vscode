@@ -81,19 +81,12 @@ export module FramePhiColors
         },
         "document-fullpath":
         {
-            getHashSource: () => getDocumentUri(),
+            getHashSource: () => getFullPathDocumentUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
         },
         "document":
         {
-            getHashSource: () =>
-            {
-                const document = getDocumentUri();
-                const workspace = getWorkspaceFolderUri();
-                return document && workspace && document.toString().startsWith(workspace.toString()) ?
-                    document.toString().substr(workspace.toString().length):
-                    document;
-            },
+            getHashSource: () => getDocumentUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
         },
         "file-type":
@@ -178,7 +171,15 @@ export module FramePhiColors
     const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
     let currentWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
-    const getDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
+    const getFullPathDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;
+    const getDocumentUri = () =>
+    {
+        const document = getFullPathDocumentUri();
+        const workspace = getWorkspaceFolderUri();
+        return document && workspace && document.toString().startsWith(workspace.toString()) ?
+            document.toString().substr(workspace.toString().length):
+            document;
+    };
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
     const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
