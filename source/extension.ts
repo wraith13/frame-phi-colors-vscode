@@ -138,7 +138,7 @@ export module FramePhiColors
             isNegative: true,
         },
     });
-    const foregroundColorModeObject = Object.freeze
+    const mainColorModeObject = Object.freeze
     ({
         "auto": (baseColor: phiColors.Hsla) =>
         {
@@ -157,11 +157,11 @@ export module FramePhiColors
     type ColorMode = ValueOf<typeof colorModeObject>;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
-    const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "hostname", colorModeValidator);
-    const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "workspace", colorModeValidator);
-    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "document", colorModeValidator);
+    const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "hostname(nega)", colorModeValidator);
+    const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "workspace(nega)", colorModeValidator);
+    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "document(nega)", colorModeValidator);
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
-    const foregroundColorMode = new Config<keyof typeof foregroundColorModeObject>("foregroundColorMode", "auto", makeEnumValidator(Object.keys(foregroundColorModeObject)));
+    const mainColorMode = new Config<keyof typeof mainColorModeObject>("mainColorMode", "auto", makeEnumValidator(Object.keys(mainColorModeObject)));
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
@@ -189,7 +189,7 @@ export module FramePhiColors
                             activityBarColorMode,
                             statusBarColorMode,
                             baseColor,
-                            foregroundColorMode,
+                            mainColorMode,
                         ]
                         .map(i => i.update())
                         .reduce((a, b) => a || b)
@@ -355,8 +355,9 @@ export module FramePhiColors
             )
             || rootWorkspaceFolder;
 
-        const foregroundDirection = foregroundColorModeObject[foregroundColorMode.get()](getBaseColor());
-        const generateForegroundColor = makeArranger(0, 0, foregroundDirection *5);
+        const mainDirection = mainColorModeObject[mainColorMode.get()](getBaseColor());
+        const generateForegroundColor = makeArranger(0, 0, mainDirection *5);
+        const generateBackgroundColor = makeArranger(0, 0, 0);
         const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
         const titleBarColor = getModeAndHash(titleBarColorMode);
         applyColor
@@ -364,8 +365,10 @@ export module FramePhiColors
             configBufferSet,
             titleBarColor.mode,
             [
-                new ColorSource("titleBar.foreground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), generateForegroundColor]: null),
-                new ColorSource("titleBar.background", titleBarColor.hash ? [makeArranger(titleBarColor.hash)]: null),
+                new ColorSource("titleBar.activeForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor]: null),
+                new ColorSource("titleBar.activeBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor]: null),
+                new ColorSource("titleBar.inactiveForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor, makeArranger(0, 1, mainDirection)]: null),
+                new ColorSource("titleBar.inactiveBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor, makeArranger(0, 1, mainDirection)]: null),
             ]
         );
         const activityBarColor = getModeAndHash(activityBarColorMode);
@@ -374,11 +377,11 @@ export module FramePhiColors
             configBufferSet,
             activityBarColor.mode,
             [
-                new ColorSource("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), generateForegroundColor]: null),
-                new ColorSource("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash)]: null),
-                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), makeArranger(0, 1, foregroundDirection)]: null),
+                new ColorSource("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor]: null),
+                new ColorSource("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor]: null),
+                new ColorSource("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor, makeArranger(0, 1, mainDirection *(activityBarColor.mode.isNegative ? 2: 1))]: null),
                 new ColorSource("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), generateForegroundColor]: null),
-                new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0)]: null),
+                new ColorSource("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), generateBackgroundColor]: null),
             ]
         );
         const statusBarColor = getModeAndHash(statusBarColorMode);
@@ -387,11 +390,11 @@ export module FramePhiColors
             configBufferSet,
             statusBarColor.mode,
             [
-                new ColorSource("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), generateForegroundColor]: null),
-                new ColorSource("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash)]: null),
-                new ColorSource("statusBarItem.hoverBackground", statusBarColor.hash ? [makeArranger(statusBarColor.hash, 0, foregroundDirection *-2)]: null),
-                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, foregroundDirection *-2), generateForegroundColor]),
-                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, foregroundDirection *-2)]),
+                new ColorSource("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor]: null),
+                new ColorSource("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor]: null),
+                new ColorSource("statusBarItem.hoverBackground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor, makeArranger(0, 0, mainDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
+                new ColorSource("statusBar.noFolderForeground", [makeArranger(0, -2, mainDirection *-2), statusBarColor.mode.isNegative ? generateBackgroundColor: generateForegroundColor]),
+                new ColorSource("statusBar.noFolderBackground", [makeArranger(0, -2, mainDirection *-2), statusBarColor.mode.isNegative ? generateForegroundColor: generateBackgroundColor]),
             ]
         );
         if (configBufferSet.update())
