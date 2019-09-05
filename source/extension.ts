@@ -63,36 +63,79 @@ export module FramePhiColors
         {
             getHashSource: () => null,
             configurationTarget: null,
+            isNegative: false,
         },
         "hostname":
         {
             getHashSource: () => os.hostname(),
             configurationTarget: vscode.ConfigurationTarget.Global,
+            isNegative: false,
         },
         "workspace":
         {
             getHashSource: () => getWorkspaceUri(),
             configurationTarget: vscode.ConfigurationTarget.Workspace,
+            isNegative: false,
         },
         "workspace-folder":
         {
             getHashSource: () => getWorkspaceFolderUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: false,
         },
         "document-fullpath":
         {
             getHashSource: () => getFullPathDocumentUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: false,
         },
         "document":
         {
             getHashSource: () => getDocumentUri(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: false,
         },
         "file-type":
         {
             getHashSource: () => getFileType(),
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: false,
+        },
+        "hostname(nega)":
+        {
+            getHashSource: () => os.hostname(),
+            configurationTarget: vscode.ConfigurationTarget.Global,
+            isNegative: true,
+        },
+        "workspace(nega)":
+        {
+            getHashSource: () => getWorkspaceUri(),
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
+            isNegative: true,
+        },
+        "workspace-folder(nega)":
+        {
+            getHashSource: () => getWorkspaceFolderUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: true,
+        },
+        "document-fullpath(nega)":
+        {
+            getHashSource: () => getFullPathDocumentUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: true,
+        },
+        "document(nega)":
+        {
+            getHashSource: () => getDocumentUri(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: true,
+        },
+        "file-type(nega)":
+        {
+            getHashSource: () => getFileType(),
+            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            isNegative: true,
         },
     });
     const foregroundColorModeObject = Object.freeze
