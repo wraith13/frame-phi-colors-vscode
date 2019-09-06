@@ -7,7 +7,7 @@
 	"publisher": "wraith13",
 	"license": "SEE LICENSE IN LICENSE_1_0.txt",
 	"engines": {
-		"vscode": "^1.37.0"
+		"vscode": "^1.38.0"
 	},
 	"bugs": {
 		"url": "https://github.com/wraith13/frame-phi-colors-vscode/issues"
