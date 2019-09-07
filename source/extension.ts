@@ -157,6 +157,7 @@ export module FramePhiColors
     type ColorMode = ValueOf<typeof colorModeObject>;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
+    const theme = new Config("workbench.colorTheme", "");
     const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "hostname(nega)", colorModeValidator);
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "workspace(nega)", colorModeValidator);
     const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "document(nega)", colorModeValidator);
@@ -185,6 +186,7 @@ export module FramePhiColors
                     if
                     (
                         [
+                            theme,
                             titleBarColorMode,
                             activityBarColorMode,
                             statusBarColorMode,
