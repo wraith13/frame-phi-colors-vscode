@@ -144,13 +144,13 @@ export module FramePhiColors
     //type ColorMode = ValueOf<typeof colorModeObject>;
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
+    const baseColor = new Config("baseColor", "#5679C9", colorValidator);
     const titleBarColorSource = new Config<ColorSourceKey>("titleColorSource", "hostname", colorCourceValidator);
     const activityBarColorSource = new Config<ColorSourceKey>("activityBarColorSource", "workspace", colorCourceValidator);
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
     const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "nega-dark", colorModeValidator);
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "nega-dark", colorModeValidator);
     const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "nega-dark", colorModeValidator);
-    const baseColor = new Config("baseColor", "#5679C9", colorValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {

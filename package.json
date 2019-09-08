@@ -30,7 +30,92 @@
 				"command": "extension.helloWorld",
 				"title": "Hello World"
 			}
-		]
+		],
+		"configuration":{
+			"title": "Frame Phi Colors",
+			"properties": {
+				"framePhiColors.baseColor": {
+					"type": "string",
+					"default": "#5679C9",
+					"description": "%framePhiColors.baseColor.description%"
+				},
+				"framePhiColors.titleColorSource": {
+					"type": "string",
+					"default": "hostname",
+					"enum": [
+						"none",
+						"hostname",
+						"workspace",
+						"workspace-folder",
+						"document-fullpath",
+						"document",
+						"file-type"
+					],
+					"description": "%framePhiColors.titleColorSource.description%"
+				},
+				"framePhiColors.activityBarColorSource": {
+					"type": "string",
+					"default": "workspace",
+					"enum": [
+						"none",
+						"hostname",
+						"workspace",
+						"workspace-folder",
+						"document-fullpath",
+						"document",
+						"file-type"
+					],
+					"description": "%framePhiColors.activityBarColorSource.description%"
+				},
+				"framePhiColors.statusBarColorSource": {
+					"type": "string",
+					"default": "document",
+					"enum": [
+						"none",
+						"hostname",
+						"workspace",
+						"workspace-folder",
+						"document-fullpath",
+						"document",
+						"file-type"
+					],
+					"description": "%framePhiColors.statusBarColorSource.description%"
+				},
+				"framePhiColors.titleColorMode": {
+					"type": "string",
+					"default": "nega-dark",
+					"enum": [
+						"posi-light",
+						"posi-dark",
+						"nega-light",
+						"nega-dark"
+					],
+					"description": "%framePhiColors.titleColorMode.description%"
+				},
+				"framePhiColors.activityBarColorMode": {
+					"type": "string",
+					"default": "nega-dark",
+					"enum": [
+						"posi-light",
+						"posi-dark",
+						"nega-light",
+						"nega-dark"
+					],
+					"description": "%framePhiColors.activityBarColorMode.description%"
+				},
+				"framePhiColors.statusBarColorMode": {
+					"type": "string",
+					"default": "nega-dark",
+					"enum": [
+						"posi-light",
+						"posi-dark",
+						"nega-light",
+						"nega-dark"
+					],
+					"description": "%framePhiColors.statusBarColorMode.description%"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
