@@ -34,6 +34,17 @@
 		"configuration":{
 			"title": "Frame Phi Colors",
 			"properties": {
+				"framePhiColors.applyScope": {
+					"type": "string",
+					"default": "has .vscode or .git",
+					"enum": [
+						"none",
+						"has .vscode",
+						"has .vscode or .git",
+						"any"
+					],
+					"description": "%framePhiColors.applyScope.description%"
+				},
 				"framePhiColors.baseColor": {
 					"type": "string",
 					"default": "#5679C9",
