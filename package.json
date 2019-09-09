@@ -23,7 +23,7 @@
 	"activationEvents": [
 		"*"
 	],
-	"main": "./out/extension.js",
+	"main": "./out/source/extension.js",
 	"contributes": {
 		"commands": [
 			{

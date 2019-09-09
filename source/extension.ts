@@ -2,6 +2,19 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import { phiColors } from 'phi-colors';
 
+import localeEn from "../package.nls.json";
+import localeJa from "../package.nls.ja.json";
+
+interface LocaleEntry
+{
+    [key : string] : string;
+}
+const localeTableKey = <string>JSON.parse(<string>process.env.VSCODE_NLS_CONFIG).locale;
+const localeTable = Object.assign(localeEn, ((<{[key : string] : LocaleEntry}>{
+    ja : localeJa
+})[localeTableKey] || { }));
+const localeString = (key : string) : string => localeTable[key] || key;
+
 export module FramePhiColors
 {
     const applicationKey = "framePhiColors";
