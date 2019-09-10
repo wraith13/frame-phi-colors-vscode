@@ -116,7 +116,7 @@
 				},
 				"framePhiColors.statusBarColorMode": {
 					"type": "string",
-					"default": "nega-dark",
+					"default": "posi-light",
 					"enum": [
 						"posi-light",
 						"posi-dark",

@@ -163,7 +163,7 @@ export module FramePhiColors
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
     const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "nega-dark", colorModeValidator);
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "nega-dark", colorModeValidator);
-    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "nega-dark", colorModeValidator);
+    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "posi-light", colorModeValidator);
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
