@@ -70,6 +70,25 @@ export module FramePhiColors
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
+    const applyScopeObject = Object.freeze
+    ({
+        "none":
+        {
+            isEnabled: () => false,
+        },
+        "has .vscode":
+        {
+            isEnabled: () => true,
+        },
+        "has .vscode or .git":
+        {
+            isEnabled: () => true,
+        },
+        "any":
+        {
+            isEnabled: () => true,
+        },
+    });
     const colorSourceObject = Object.freeze
     ({
         "none":
@@ -150,6 +169,8 @@ export module FramePhiColors
     });
 
     type ValueOf<T> = T[keyof T];
+    type ApplyScopeKey = keyof typeof applyScopeObject;
+    type ApplyScope = ValueOf<typeof applyScopeObject>;
     type ColorSourceKey = keyof typeof colorSourceObject;
     type ColorSource = ValueOf<typeof colorSourceObject>;
     const colorCourceValidator = makeEnumValidator(Object.keys(colorSourceObject));
@@ -158,6 +179,7 @@ export module FramePhiColors
     const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
 
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
+    const applyScope = new Config<ApplyScopeKey>("applyScope", "has .vscode or .git", makeEnumValidator(Object.keys(applyScopeObject)));
     const titleBarColorSource = new Config<ColorSourceKey>("titleColorSource", "hostname", colorCourceValidator);
     const activityBarColorSource = new Config<ColorSourceKey>("activityBarColorSource", "workspace", colorCourceValidator);
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
@@ -187,6 +209,7 @@ export module FramePhiColors
                     if
                     (
                         [
+                            applyScope,
                             titleBarColorSource,
                             activityBarColorSource,
                             statusBarColorSource,
@@ -351,48 +374,55 @@ export module FramePhiColors
             )
             || rootWorkspaceFolder;
 
-        const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
-        const titleBarColor = getConfig(titleBarColorSource, titleBarColorMode);
-        applyColor
-        (
-            configBufferSet,
-            titleBarColor.source,
-            [
-                new ColorItem("titleBar.activeForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateForegroundColor]: null),
-                new ColorItem("titleBar.activeBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateBackgroundColor]: null),
-                new ColorItem("titleBar.inactiveForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateForegroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
-                new ColorItem("titleBar.inactiveBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateBackgroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
-            ]
-        );
-        const activityBarColor = getConfig(activityBarColorSource, activityBarColorMode);
-        applyColor
-        (
-            configBufferSet,
-            activityBarColor.source,
-            [
-                new ColorItem("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateForegroundColor]: null),
-                new ColorItem("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateBackgroundColor]: null),
-                new ColorItem("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateForegroundColor, makeArranger(0, 1, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 2: 1))]: null),
-                new ColorItem("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *5)]: null),
-                new ColorItem("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
-            ]
-        );
-        const statusBarColor = getConfig(statusBarColorSource, statusBarColorMode);
-        applyColor
-        (
-            configBufferSet,
-            statusBarColor.source,
-            [
-                new ColorItem("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateForegroundColor]: null),
-                new ColorItem("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateBackgroundColor]: null),
-                new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
-                new ColorItem("statusBar.noFolderForeground", [makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2), statusBarColor.mode.generateForegroundColor]),
-                new ColorItem("statusBar.noFolderBackground", [makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2), statusBarColor.mode.generateBackgroundColor]),
-            ]
-        );
-        if (configBufferSet.update())
+        if (applyScopeObject[applyScope.get()].isEnabled())
         {
-            console.log('🌈 applyed frame-phi-colors!!!');
+            const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
+            const titleBarColor = getConfig(titleBarColorSource, titleBarColorMode);
+            applyColor
+            (
+                configBufferSet,
+                titleBarColor.source,
+                [
+                    new ColorItem("titleBar.activeForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateForegroundColor]: null),
+                    new ColorItem("titleBar.activeBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateBackgroundColor]: null),
+                    new ColorItem("titleBar.inactiveForeground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateForegroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
+                    new ColorItem("titleBar.inactiveBackground", titleBarColor.hash ? [makeArranger(titleBarColor.hash), titleBarColor.mode.generateBackgroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
+                ]
+            );
+            const activityBarColor = getConfig(activityBarColorSource, activityBarColorMode);
+            applyColor
+            (
+                configBufferSet,
+                activityBarColor.source,
+                [
+                    new ColorItem("activityBar.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateForegroundColor]: null),
+                    new ColorItem("activityBar.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateBackgroundColor]: null),
+                    new ColorItem("activityBar.inactiveForeground", activityBarColor.hash ? [makeArranger(activityBarColor.hash), activityBarColor.mode.generateForegroundColor, makeArranger(0, 1, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 2: 1))]: null),
+                    new ColorItem("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *5)]: null),
+                    new ColorItem("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
+                ]
+            );
+            const statusBarColor = getConfig(statusBarColorSource, statusBarColorMode);
+            applyColor
+            (
+                configBufferSet,
+                statusBarColor.source,
+                [
+                    new ColorItem("statusBar.foreground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateForegroundColor]: null),
+                    new ColorItem("statusBar.background", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateBackgroundColor]: null),
+                    new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [makeArranger(statusBarColor.hash), statusBarColor.mode.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
+                    new ColorItem("statusBar.noFolderForeground", [makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2), statusBarColor.mode.generateForegroundColor]),
+                    new ColorItem("statusBar.noFolderBackground", [makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2), statusBarColor.mode.generateBackgroundColor]),
+                ]
+            );
+            if (configBufferSet.update())
+            {
+                console.log(localeString('🌈 applyed frame-phi-colors!!!'));
+            }
+        }
+        else
+        {
+            console.log('🚫 frame-phi-colors is disabled.');
         }
     };
 }
