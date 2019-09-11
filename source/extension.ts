@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as os from 'os';
+import * as fs from 'fs';
 import { phiColors } from 'phi-colors';
 
 import localeEn from "../package.nls.json";
@@ -14,6 +15,21 @@ const localeTable = Object.assign(localeEn, ((<{[key : string] : LocaleEntry}>{
     ja : localeJa
 })[localeTableKey] || { }));
 const localeString = (key : string) : string => localeTable[key] || key;
+
+module fx
+{
+    export function exists(path : string) : Thenable<boolean>
+    {
+        return new Promise
+        (
+            resolve => fs.exists
+            (
+                path,
+                exists => resolve(exists)
+            )
+        );
+    }
+}
 
 export module FramePhiColors
 {
