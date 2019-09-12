@@ -86,23 +86,37 @@ export module FramePhiColors
     }
     const colorValidator = (value: string): boolean => /^#[0-9A-Fa-f]{6}$/.test(value);
     const makeEnumValidator = (valueList: string[]): (value: string) => boolean => (value: string): boolean => 0 <= valueList.indexOf(value);
+    const hasDir = async (dirs: string[]) =>
+    {
+        if (undefined !== rootWorkspaceFolder)
+        {
+            for(let i = 0; i < dirs.length; ++i)
+            {
+                if (await fx.exists(`${rootWorkspaceFolder.uri.fsPath}/${dirs[i]}`))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
     const applyScopeObject = Object.freeze
     ({
         "none":
         {
-            isEnabled: () => false,
+            isEnabled: async () => false,
         },
         "has .vscode":
         {
-            isEnabled: () => true,
+            isEnabled: async () => await hasDir([".vscode"]),
         },
         "has .vscode or .git":
         {
-            isEnabled: () => true,
+            isEnabled: async () => await hasDir([".vscode", ".git"]),
         },
         "any":
         {
-            isEnabled: () => true,
+            isEnabled: async () => true,
         },
     });
     const colorSourceObject = Object.freeze
@@ -186,7 +200,7 @@ export module FramePhiColors
 
     type ValueOf<T> = T[keyof T];
     type ApplyScopeKey = keyof typeof applyScopeObject;
-    type ApplyScope = ValueOf<typeof applyScopeObject>;
+    //type ApplyScope = ValueOf<typeof applyScopeObject>;
     type ColorSourceKey = keyof typeof colorSourceObject;
     type ColorSource = ValueOf<typeof colorSourceObject>;
     const colorCourceValidator = makeEnumValidator(Object.keys(colorSourceObject));
@@ -376,7 +390,7 @@ export module FramePhiColors
         return { source, mode, hash };
     };
 
-    const apply = () =>
+    const apply = async () =>
     {
         rootWorkspaceFolder = vscode.workspace.workspaceFolders && 0 < vscode.workspace.workspaceFolders.length ?
             vscode.workspace.workspaceFolders[0]:
@@ -390,7 +404,7 @@ export module FramePhiColors
             )
             || rootWorkspaceFolder;
 
-        if (applyScopeObject[applyScope.get()].isEnabled())
+        if (await applyScopeObject[applyScope.get()].isEnabled())
         {
             const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
             const titleBarColor = getConfig(titleBarColorSource, titleBarColorMode);
