@@ -157,15 +157,13 @@ export module FramePhiColors
             configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
         },
     });
-    const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0) => (baseColor: phiColors.Hsla) => phiColors.generate
-    (
-        baseColor,
+    const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0, alpha: number = 0) =>
+    ({
         hue,
         saturation,
         lightness,
-        0,
-        true
-    );
+        alpha,
+    });
     const colorModeObject = Object.freeze
     ({
         "posi-light":
@@ -353,9 +351,42 @@ export module FramePhiColors
     class ColorItem
     {
         public color: phiColors.Hsla | null;
-        constructor(public key: string, arrangers: ((source: phiColors.Hsla)=> phiColors.Hsla)[] | null)
+        constructor
+        (
+            public key: string,
+            arrangers:
+            {
+                hue :number,
+                saturation :number,
+                lightness :number,
+                alpha :number,
+            }[] | null
+        )
         {
-            this.color = arrangers ? arrangers.reduce((v, i) => i(v), getBaseColor()): null;
+            if (arrangers)
+            {
+                const
+                {
+                    hue,
+                    saturation,
+                    lightness,
+                    alpha,
+                } = arrangers.reduce
+                (
+                    (v, i) =>
+                    ({
+                        hue: v.hue +i.hue,
+                        saturation: v.saturation +i.saturation,
+                        lightness: v.lightness +i.lightness,
+                        alpha: v.hue +i.alpha,
+                    })
+                );
+                this.color = phiColors.generate(getBaseColor(), hue, saturation, lightness, alpha, true);
+            }
+            else
+            {
+                this.color = null;
+            }
         }
     }
     const applyColor = (configBufferSet: ConfigBufferSet, source: ColorSource, colorList: ColorItem[]) =>
