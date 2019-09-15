@@ -203,9 +203,11 @@ export module FramePhiColors
     const titleBarColorSource = new Config<ColorSourceKey>("titleColorSource", "hostname", colorCourceValidator);
     const activityBarColorSource = new Config<ColorSourceKey>("activityBarColorSource", "workspace", colorCourceValidator);
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
+    const statusBarDebuggingColorSource = new Config<ColorSourceKey>("statusBarDebuggingColorSource", "document", colorCourceValidator);
     const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "nega-dark", colorModeValidator);
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "nega-dark", colorModeValidator);
     const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "posi-light", colorModeValidator);
+    const statusBarDebuggingColorMode = new Config<ColorModeKey>("statusBarDebuggingColorMode", "posi-dark", colorModeValidator);
     const statusBarNoFolderColorMode = new Config<ColorModeKey>("statusBarNoFolderColorMode", "nega-dark", colorModeValidator);
     
 
@@ -235,9 +237,11 @@ export module FramePhiColors
                             titleBarColorSource,
                             activityBarColorSource,
                             statusBarColorSource,
+                            statusBarDebuggingColorSource,
                             titleBarColorMode,
                             activityBarColorMode,
                             statusBarColorMode,
+                            statusBarDebuggingColorMode,
                             statusBarNoFolderColorMode,
                             baseColor,
                         ]
@@ -477,6 +481,16 @@ export module FramePhiColors
                     new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
                 ]
             );
+            const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColorMode);
+            applyColor
+            (
+                configBufferSet,
+                statusBarDebuggingColor.source,
+                [
+                    new ColorItem("statusBar.debuggingForeground", statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateForegroundColor]: null),
+                    new ColorItem("statusBar.debuggingBackground", statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateBackgroundColor]: null),
+                ]
+            );
             const statusBarNoFolderColor = getPallet
             (
                 colorSourceObject.hostname, // 保存 Scope を global にする為
@@ -488,8 +502,8 @@ export module FramePhiColors
                 configBufferSet,
                 statusBarNoFolderColor.source,
                 [
-                    new ColorItem("statusBar.noFolderForeground", [statusBarNoFolderColor.generateForegroundColor, makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2)]),
-                    new ColorItem("statusBar.noFolderBackground", [statusBarNoFolderColor.generateBackgroundColor, makeArranger(0, -2, statusBarColor.mode.mainColorDirection *-2)]),
+                    new ColorItem("statusBar.noFolderForeground", [statusBarNoFolderColor.generateForegroundColor, makeArranger(0, -2, statusBarNoFolderColor.mode.mainColorDirection *-2)]),
+                    new ColorItem("statusBar.noFolderBackground", [statusBarNoFolderColor.generateBackgroundColor, makeArranger(0, -2, statusBarNoFolderColor.mode.mainColorDirection *-2)]),
                 ]
             );
             if (configBufferSet.update())
