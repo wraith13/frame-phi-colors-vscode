@@ -200,11 +200,11 @@ export module FramePhiColors
 
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
     const applyScope = new Config<ApplyScopeKey>("applyScope", "has .vscode or .git", makeEnumValidator(Object.keys(applyScopeObject)));
-    const titleBarColorSource = new Config<ColorSourceKey>("titleColorSource", "hostname", colorCourceValidator);
+    const titleBarColorSource = new Config<ColorSourceKey>("titleBarColorSource", "hostname", colorCourceValidator);
     const activityBarColorSource = new Config<ColorSourceKey>("activityBarColorSource", "workspace", colorCourceValidator);
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
     const statusBarDebuggingColorSource = new Config<ColorSourceKey>("statusBarDebuggingColorSource", "document", colorCourceValidator);
-    const titleBarColorMode = new Config<ColorModeKey>("titleColorMode", "nega-dark", colorModeValidator);
+    const titleBarColorMode = new Config<ColorModeKey>("titleBarColorMode", "nega-dark", colorModeValidator);
     const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "nega-dark", colorModeValidator);
     const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "posi-light", colorModeValidator);
     const statusBarDebuggingColorMode = new Config<ColorModeKey>("statusBarDebuggingColorMode", "posi-dark", colorModeValidator);
