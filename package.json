@@ -106,7 +106,7 @@
 					],
 					"description": "%framePhiColors.statusBarDebuggingColorSource.description%"
 				},
-				"framePhiColors.titleBarColorMode": {
+				"framePhiColors.titleBarColoringStyle": {
 					"type": "string",
 					"default": "nega-dark",
 					"enum": [
@@ -115,9 +115,9 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.titleBarColorMode.description%"
+					"description": "%framePhiColors.titleBarColoringStyle.description%"
 				},
-				"framePhiColors.activityBarColorMode": {
+				"framePhiColors.activityBarColoringStyle": {
 					"type": "string",
 					"default": "nega-dark",
 					"enum": [
@@ -126,9 +126,9 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.activityBarColorMode.description%"
+					"description": "%framePhiColors.activityBarColoringStyle.description%"
 				},
-				"framePhiColors.statusBarColorMode": {
+				"framePhiColors.statusBarColoringStyle": {
 					"type": "string",
 					"default": "posi-light",
 					"enum": [
@@ -137,9 +137,9 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.statusBarColorMode.description%"
+					"description": "%framePhiColors.statusBarColoringStyle.description%"
 				},
-				"framePhiColors.statusBarDebuggingColorMode": {
+				"framePhiColors.statusBarDebuggingColoringStyle": {
 					"type": "string",
 					"default": "posi-dark",
 					"enum": [
@@ -148,9 +148,9 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.statusBarDebuggingColorMode.description%"
+					"description": "%framePhiColors.statusBarDebuggingColoringStyle.description%"
 				},
-				"framePhiColors.statusBarNoFolderColorMode": {
+				"framePhiColors.statusBarNoFolderColoringStyle": {
 					"type": "string",
 					"default": "nega-dark",
 					"enum": [
@@ -159,7 +159,7 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.statusBarNoFolderColorMode.description%"
+					"description": "%framePhiColors.statusBarNoFolderColoringStyle.description%"
 				}
 			}
 		}

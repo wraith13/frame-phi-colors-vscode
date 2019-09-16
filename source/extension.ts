@@ -164,7 +164,7 @@ export module FramePhiColors
         lightness,
         alpha,
     });
-    const colorModeObject = Object.freeze
+    const coloringStyleObject = Object.freeze
     ({
         "posi-light":
         {
@@ -194,9 +194,9 @@ export module FramePhiColors
     type ColorSourceKey = keyof typeof colorSourceObject;
     type ColorSource = ValueOf<typeof colorSourceObject>;
     const colorCourceValidator = makeEnumValidator(Object.keys(colorSourceObject));
-    type ColorModeKey = keyof typeof colorModeObject;
-    type ColorMode = ValueOf<typeof colorModeObject>;
-    const colorModeValidator = makeEnumValidator(Object.keys(colorModeObject));
+    type ColoringStyleKey = keyof typeof coloringStyleObject;
+    type ColoringStyle = ValueOf<typeof coloringStyleObject>;
+    const coloringStyleValidator = makeEnumValidator(Object.keys(coloringStyleObject));
 
     const baseColor = new Config("baseColor", "#5679C9", colorValidator);
     const applyScope = new Config<ApplyScopeKey>("applyScope", "has .vscode or .git", makeEnumValidator(Object.keys(applyScopeObject)));
@@ -204,11 +204,11 @@ export module FramePhiColors
     const activityBarColorSource = new Config<ColorSourceKey>("activityBarColorSource", "workspace", colorCourceValidator);
     const statusBarColorSource = new Config<ColorSourceKey>("statusBarColorSource", "document", colorCourceValidator);
     const statusBarDebuggingColorSource = new Config<ColorSourceKey>("statusBarDebuggingColorSource", "document", colorCourceValidator);
-    const titleBarColorMode = new Config<ColorModeKey>("titleBarColorMode", "nega-dark", colorModeValidator);
-    const activityBarColorMode = new Config<ColorModeKey>("activityBarColorMode", "nega-dark", colorModeValidator);
-    const statusBarColorMode = new Config<ColorModeKey>("statusBarColorMode", "posi-light", colorModeValidator);
-    const statusBarDebuggingColorMode = new Config<ColorModeKey>("statusBarDebuggingColorMode", "posi-dark", colorModeValidator);
-    const statusBarNoFolderColorMode = new Config<ColorModeKey>("statusBarNoFolderColorMode", "nega-dark", colorModeValidator);
+    const titleBarColoringStyle = new Config<ColoringStyleKey>("titleBarColoringStyle", "nega-dark", coloringStyleValidator);
+    const activityBarColoringStyle = new Config<ColoringStyleKey>("activityBarColoringStyle", "nega-dark", coloringStyleValidator);
+    const statusBarColoringStyle = new Config<ColoringStyleKey>("statusBarColoringStyle", "posi-light", coloringStyleValidator);
+    const statusBarDebuggingColoringStyle = new Config<ColoringStyleKey>("statusBarDebuggingColoringStyle", "posi-dark", coloringStyleValidator);
+    const statusBarNoFolderColoringStyle = new Config<ColoringStyleKey>("statusBarNoFolderColoringStyle", "nega-dark", coloringStyleValidator);
     
 
     export const initialize = (context: vscode.ExtensionContext): void =>
@@ -238,11 +238,11 @@ export module FramePhiColors
                             activityBarColorSource,
                             statusBarColorSource,
                             statusBarDebuggingColorSource,
-                            titleBarColorMode,
-                            activityBarColorMode,
-                            statusBarColorMode,
-                            statusBarDebuggingColorMode,
-                            statusBarNoFolderColorMode,
+                            titleBarColoringStyle,
+                            activityBarColoringStyle,
+                            statusBarColoringStyle,
+                            statusBarDebuggingColoringStyle,
+                            statusBarNoFolderColoringStyle,
                             baseColor,
                         ]
                         .map(i => i.update())
@@ -278,7 +278,7 @@ export module FramePhiColors
             document;
     };
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
-    const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
+    const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromingStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
     {
@@ -407,20 +407,20 @@ export module FramePhiColors
                 source,
                 item.key,
                 null !== item.color ?
-                    phiColors.rgbForStyle(phiColors.hslaToRgba(item.color)):
+                    phiColors.rgbForingStyle(phiColors.hslaToRgba(item.color)):
                     undefined
             )
         );
     };
-    const getConfigAndPallet = (sourceConfig: Config<ColorSourceKey>, modeConfig: Config<ColorModeKey>) =>
+    const getConfigAndPallet = (sourceConfig: Config<ColorSourceKey>, modeConfig: Config<ColoringStyleKey>) =>
     {
         const source = colorSourceObject[sourceConfig.get()];
-        const mode = colorModeObject[modeConfig.get()];
+        const mode = coloringStyleObject[modeConfig.get()];
         const hash = generateHueIndex(source.getHashSource());
 
         return getPallet(source, mode, hash);
     };
-    const getPallet = (source: ColorSource, mode: ColorMode, hash: number | null) =>
+    const getPallet = (source: ColorSource, mode: ColoringStyle, hash: number | null) =>
     {
         const generateForegroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? 0: mode.mainColorDirection) *5);
         const generateBackgroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? mode.mainColorDirection: 0) *5);
@@ -445,7 +445,7 @@ export module FramePhiColors
         if (await applyScopeObject[applyScope.get()].isEnabled())
         {
             const configBufferSet = new ConfigBufferSet("workbench.colorCustomizations");
-            const titleBarColor = getConfigAndPallet(titleBarColorSource, titleBarColorMode);
+            const titleBarColor = getConfigAndPallet(titleBarColorSource, titleBarColoringStyle);
             applyColor
             (
                 configBufferSet,
@@ -457,7 +457,7 @@ export module FramePhiColors
                     new ColorItem("titleBar.inactiveBackground", titleBarColor.hash ? [titleBarColor.generateBackgroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
                 ]
             );
-            const activityBarColor = getConfigAndPallet(activityBarColorSource, activityBarColorMode);
+            const activityBarColor = getConfigAndPallet(activityBarColorSource, activityBarColoringStyle);
             applyColor
             (
                 configBufferSet,
@@ -470,7 +470,7 @@ export module FramePhiColors
                     new ColorItem("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
                 ]
             );
-            const statusBarColor = getConfigAndPallet(statusBarColorSource, statusBarColorMode);
+            const statusBarColor = getConfigAndPallet(statusBarColorSource, statusBarColoringStyle);
             applyColor
             (
                 configBufferSet,
@@ -481,7 +481,7 @@ export module FramePhiColors
                     new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
                 ]
             );
-            const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColorMode);
+            const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColoringStyle);
             applyColor
             (
                 configBufferSet,
@@ -494,7 +494,7 @@ export module FramePhiColors
             const statusBarNoFolderColor = getPallet
             (
                 colorSourceObject.hostname, // 保存 Scope を global にする為
-                colorModeObject[statusBarNoFolderColorMode.get()],
+                coloringStyleObject[statusBarNoFolderColoringStyle.get()],
                 0 // hash は固定
             );
             applyColor
