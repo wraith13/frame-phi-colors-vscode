@@ -50,7 +50,7 @@
 					"default": "#5679C9",
 					"description": "%framePhiColors.baseColor.description%"
 				},
-				"framePhiColors.titleColorSource": {
+				"framePhiColors.titleBarColorSource": {
 					"type": "string",
 					"default": "hostname",
 					"enum": [
@@ -62,7 +62,7 @@
 						"document",
 						"file-type"
 					],
-					"description": "%framePhiColors.titleColorSource.description%"
+					"description": "%framePhiColors.titleBarColorSource.description%"
 				},
 				"framePhiColors.activityBarColorSource": {
 					"type": "string",
@@ -92,7 +92,21 @@
 					],
 					"description": "%framePhiColors.statusBarColorSource.description%"
 				},
-				"framePhiColors.titleColorMode": {
+				"framePhiColors.statusBarDebuggingColorSource": {
+					"type": "string",
+					"default": "document",
+					"enum": [
+						"none",
+						"hostname",
+						"workspace",
+						"workspace-folder",
+						"document-fullpath",
+						"document",
+						"file-type"
+					],
+					"description": "%framePhiColors.statusBarDebuggingColorSource.description%"
+				},
+				"framePhiColors.titleBarColorMode": {
 					"type": "string",
 					"default": "nega-dark",
 					"enum": [
@@ -101,7 +115,7 @@
 						"nega-light",
 						"nega-dark"
 					],
-					"description": "%framePhiColors.titleColorMode.description%"
+					"description": "%framePhiColors.titleBarColorMode.description%"
 				},
 				"framePhiColors.activityBarColorMode": {
 					"type": "string",
@@ -124,6 +138,28 @@
 						"nega-dark"
 					],
 					"description": "%framePhiColors.statusBarColorMode.description%"
+				},
+				"framePhiColors.statusBarDebuggingColorMode": {
+					"type": "string",
+					"default": "posi-dark",
+					"enum": [
+						"posi-light",
+						"posi-dark",
+						"nega-light",
+						"nega-dark"
+					],
+					"description": "%framePhiColors.statusBarDebuggingColorMode.description%"
+				},
+				"framePhiColors.statusBarNoFolderColorMode": {
+					"type": "string",
+					"default": "nega-dark",
+					"enum": [
+						"posi-light",
+						"posi-dark",
+						"nega-light",
+						"nega-dark"
+					],
+					"description": "%framePhiColors.statusBarNoFolderColorMode.description%"
 				}
 			}
 		}
