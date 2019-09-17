@@ -278,7 +278,7 @@ export module FramePhiColors
             document;
     };
     const getFileType = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri.toString().replace(/.*(\.[^\.]*)/, "$1"): null;
-    const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromingStyle(baseColor.get()));
+    const getBaseColor = () => phiColors.rgbaToHsla(phiColors.rgbaFromStyle(baseColor.get()));
     const generateHueIndex = (source : vscode.Uri | string | null) => undefined === source ? null: hash(`${source}`);
     const getConfigurationUri = (configurationTarget: vscode.ConfigurationTarget) =>
     {
@@ -407,7 +407,7 @@ export module FramePhiColors
                 source,
                 item.key,
                 null !== item.color ?
-                    phiColors.rgbForingStyle(phiColors.hslaToRgba(item.color)):
+                    phiColors.rgbForStyle(phiColors.hslaToRgba(item.color)):
                     undefined
             )
         );
