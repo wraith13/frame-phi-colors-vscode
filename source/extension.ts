@@ -139,22 +139,22 @@ export module FramePhiColors
         "workspace-folder":
         {
             getHashSource: () => getWorkspaceFolderUri(),
-            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
         "document-fullpath":
         {
             getHashSource: () => getFullPathDocumentUri(),
-            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
         "document":
         {
             getHashSource: () => getDocumentUri(),
-            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
         "file-type":
         {
             getHashSource: () => getFileType(),
-            configurationTarget: vscode.ConfigurationTarget.WorkspaceFolder,
+            configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
     });
     const makeArranger = (hue: number, saturation: number = 0, lightness: number = 0, alpha: number = 0) =>
