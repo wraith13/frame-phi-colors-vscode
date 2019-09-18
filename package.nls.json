@@ -1,0 +1,13 @@
+{
+    "framePhiColors.applyScope.description": "Directory conditions for automatic frame coloring",
+    "framePhiColors.baseColor.description": "Arranges and colors based on this color. ( #RRGGBB )",
+    "framePhiColors.titleBarColorSource.description": "Source to arrange title bar colors",
+    "framePhiColors.activityBarColorSource.description": "Source to activity title bar colors",
+    "framePhiColors.statusBarColorSource.description": "Source to activity status bar colors",
+    "framePhiColors.statusBarDebuggingColorSource.description": "Source to arrange status bar color while debugging",
+    "framePhiColors.titleBarColoringStyle.description": "Title bar coloring style",
+    "framePhiColors.activityBarColoringStyle.description": "Activity bar coloring style",
+    "framePhiColors.statusBarColoringStyle.description": "Status bar coloring style",
+    "framePhiColors.statusBarDebuggingColoringStyle.description": "Status bar coloring style while debugging",
+    "framePhiColors.statusBarNoFolderColoringStyle.description": "Status bar coloring style when folder is not open"
+}

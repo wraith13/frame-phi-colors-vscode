@@ -1,0 +1,13 @@
+{
+    "framePhiColors.applyScope.description": "フレームの自動着色を行うディレクトリの条件",
+    "framePhiColors.baseColor.description": "この色をベースにアレンジして着色を行います。 ( #RRGGBB )",
+    "framePhiColors.titleBarColorSource.description": "タイトルバー色をアレンジするソース",
+    "framePhiColors.activityBarColorSource.description": "アクティビティバー色をアレンジするソース",
+    "framePhiColors.statusBarColorSource.description": "ステータスバー色をアレンジするソース",
+    "framePhiColors.statusBarDebuggingColorSource.description": "デバッグ中のステータスバー色をアレンジするソース",
+    "framePhiColors.titleBarColoringStyle.description": "タイトルバーのカラーリングスタイル",
+    "framePhiColors.activityBarColoringStyle.description": "アクティビティバーのカラーリングスタイル",
+    "framePhiColors.statusBarColoringStyle.description": "ステータスバーのカラーリングスタイル",
+    "framePhiColors.statusBarDebuggingColoringStyle.description": "デバッグ中のステータスバーのカラーリングスタイル",
+    "framePhiColors.statusBarNoFolderColoringStyle.description": "フォルダを開いてない時のステータスバーのカラーリングスタイル"
+}
