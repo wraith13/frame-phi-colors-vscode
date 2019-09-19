@@ -388,7 +388,7 @@ export module FramePhiColors
                         alpha: v.hue +i.alpha,
                     })
                 );
-                this.color = phiColors.generate(getBaseColor(), hue, saturation, lightness, alpha, true);
+                this.color = phiColors.generate(getBaseColor(), hue, saturation, lightness, alpha);
             }
             else
             {
@@ -422,8 +422,8 @@ export module FramePhiColors
     };
     const getPallet = (source: ColorSource, mode: ColoringStyle, hash: number | null) =>
     {
-        const generateForegroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? 0: mode.mainColorDirection) *5);
-        const generateBackgroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? mode.mainColorDirection: 0) *5);
+        const generateForegroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? -2: 4) *mode.mainColorDirection);
+        const generateBackgroundColor = makeArranger(hash || 0, 0, (mode.isNegative ? 4: -0.5) *mode.mainColorDirection);
 
         return { source, mode, hash, generateForegroundColor, generateBackgroundColor };
     };
@@ -465,7 +465,7 @@ export module FramePhiColors
                 [
                     new ColorItem("activityBar.foreground", activityBarColor.hash ? [activityBarColor.generateForegroundColor]: null),
                     new ColorItem("activityBar.background", activityBarColor.hash ? [activityBarColor.generateBackgroundColor]: null),
-                    new ColorItem("activityBar.inactiveForeground", activityBarColor.hash ? [activityBarColor.generateForegroundColor, makeArranger(-0.1, 0, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 1: -0.8))]: null),
+                    new ColorItem("activityBar.inactiveForeground", activityBarColor.hash ? [activityBarColor.generateForegroundColor, makeArranger(-0.1, 0, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 3: -4))]: null),
                     new ColorItem("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *5)]: null),
                     new ColorItem("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
                 ]
@@ -478,7 +478,7 @@ export module FramePhiColors
                 [
                     new ColorItem("statusBar.foreground", statusBarColor.hash ? [statusBarColor.generateForegroundColor]: null),
                     new ColorItem("statusBar.background", statusBarColor.hash ? [statusBarColor.generateBackgroundColor]: null),
-                    new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *(statusBarColor.mode.isNegative ? -0.3: -2))]: null),
+                    new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *-3)]: null),
                 ]
             );
             const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColoringStyle);
