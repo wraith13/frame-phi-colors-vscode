@@ -315,13 +315,14 @@ export module FramePhiColors
     {
         global: ConfigBuffer;
         workspace: ConfigBuffer | undefined;
-        workspaceFolder: ConfigBuffer | undefined;
+        //workspaceFolder: ConfigBuffer | undefined;
         constructor(key: string)
         {
             this.global = new ConfigBuffer(vscode.ConfigurationTarget.Global, key);
             if (rootWorkspaceFolder)
             {
                 this.workspace = new ConfigBuffer(vscode.ConfigurationTarget.Workspace, key);
+                /*
                 if
                 (
                     vscode.workspace.workspaceFolders &&
@@ -332,27 +333,28 @@ export module FramePhiColors
                 {
                     this.workspaceFolder = new ConfigBuffer(vscode.ConfigurationTarget.WorkspaceFolder, key);
                 }
+                */
             }
         }
         update = () =>
             0 < (this.global.update() ? 0: 1)
                 +((this.workspace && this.workspace.update()) ? 0: 1)
-                +((this.workspaceFolder && this.workspaceFolder.update()) ? 0: 1)
+                //+((this.workspaceFolder && this.workspaceFolder.update()) ? 0: 1)
     }
     const applyConfig = (configBufferSet: ConfigBufferSet, source: ColorSource, key: string, value: string | undefined) =>
     {
         configBufferSet.global.value[key] = vscode.ConfigurationTarget.Global === source.configurationTarget ? value: undefined;
         if (configBufferSet.workspace)
         {
-            if (configBufferSet.workspaceFolder)
-            {
-                configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === source.configurationTarget ? value: undefined;
-                configBufferSet.workspaceFolder.value[key] = vscode.ConfigurationTarget.WorkspaceFolder === source.configurationTarget ? value: undefined;
-            }
-            else
-            {
+            //if (configBufferSet.workspaceFolder)
+            //{
+            //    configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === source.configurationTarget ? value: undefined;
+            //    configBufferSet.workspaceFolder.value[key] = vscode.ConfigurationTarget.WorkspaceFolder === source.configurationTarget ? value: undefined;
+            //}
+            //else
+            //{
                 configBufferSet.workspace.value[key] = vscode.ConfigurationTarget.Workspace === source.configurationTarget || vscode.ConfigurationTarget.WorkspaceFolder === source.configurationTarget ? value: undefined;
-            }
+            //}
         }
     };
     class ColorItem
