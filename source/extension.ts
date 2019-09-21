@@ -251,8 +251,7 @@ export module FramePhiColors
     };
 
     const hash = (source: string): number =>
-        source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191)
-        %34; // ← 通常、こういうところの数字は素数にすることが望ましいがここについては https://wraith13.github.io/phi-ratio-coloring/phi-ratio-coloring.htm で類似色の出てくる周期をベース(8,13,21,...)に調整すること。
+        source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191);
 
     let rootWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
@@ -471,6 +470,8 @@ export module FramePhiColors
                     new ColorItem("statusBar.foreground", statusBarColor.hash ? [statusBarColor.generateForegroundColor]: null),
                     new ColorItem("statusBar.background", statusBarColor.hash ? [statusBarColor.generateBackgroundColor]: null),
                     new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *-3)]: null),
+                    new ColorItem("statusBarItem.remoteForeground", statusBarColor.hash ? [statusBarColor.generateForegroundColor, makeArranger(0.2)]: null),
+                    new ColorItem("statusBarItem.remoteBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0.2)]: null),
                 ]
             );
             const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColoringStyle);
