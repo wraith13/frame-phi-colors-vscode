@@ -25,12 +25,6 @@
 	],
 	"main": "./out/source/extension.js",
 	"contributes": {
-		"commands": [
-			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
-			}
-		],
 		"configuration":{
 			"title": "Frame Phi Colors",
 			"properties": {

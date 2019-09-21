@@ -213,18 +213,8 @@ export module FramePhiColors
 
     export const initialize = (context: vscode.ExtensionContext): void =>
     {
-        console.log('Congratulations, your extension "frame-phi-colors" is now active!');
-
         context.subscriptions.push
         (
-            vscode.commands.registerCommand
-            (
-                'extension.helloWorld', () =>
-                {
-                    vscode.window.showInformationMessage('Hello World!');
-                }
-            ),
-
             //  イベントリスナーの登録
             vscode.workspace.onDidChangeConfiguration
             (
@@ -233,6 +223,7 @@ export module FramePhiColors
                     if
                     (
                         [
+                            baseColor,
                             applyScope,
                             titleBarColorSource,
                             activityBarColorSource,
@@ -243,7 +234,6 @@ export module FramePhiColors
                             statusBarColoringStyle,
                             statusBarDebuggingColoringStyle,
                             statusBarNoFolderColoringStyle,
-                            baseColor,
                         ]
                         .map(i => i.update())
                         .reduce((a, b) => a || b)
