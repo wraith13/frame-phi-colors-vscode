@@ -173,6 +173,6 @@
 		"@types/mocha": "^2.2.42"
 	},
 	"dependencies": {
-		"phi-colors": "^1.0.0"
+		"phi-colors": "^1.0.1"
 	}
 }
