@@ -136,9 +136,9 @@ export module FramePhiColors
             getHashSource: () => getWorkspaceUri(),
             configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
-        "workspace-folder":
+        "workspace-name":
         {
-            getHashSource: () => getWorkspaceFolderUri(),
+            getHashSource: () => getWorkspaceName(),
             configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
         "document-fullpath":
@@ -255,6 +255,7 @@ export module FramePhiColors
 
     let rootWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
+    const getWorkspaceName = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri.toString().replace(/^.*[\\\/]([^\\\/]+)$/, "$1"): null;
     let currentWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
     const getFullPathDocumentUri = () => vscode.window.activeTextEditor ? vscode.window.activeTextEditor.document.uri: null;

@@ -51,7 +51,7 @@
 						"none",
 						"hostname",
 						"workspace",
-						"workspace-folder",
+						"workspace-name",
 						"document-fullpath",
 						"document",
 						"file-type"
@@ -65,7 +65,7 @@
 						"none",
 						"hostname",
 						"workspace",
-						"workspace-folder",
+						"workspace-name",
 						"document-fullpath",
 						"document",
 						"file-type"
@@ -79,7 +79,7 @@
 						"none",
 						"hostname",
 						"workspace",
-						"workspace-folder",
+						"workspace-name",
 						"document-fullpath",
 						"document",
 						"file-type"
@@ -93,7 +93,7 @@
 						"none",
 						"hostname",
 						"workspace",
-						"workspace-folder",
+						"workspace-name",
 						"document-fullpath",
 						"document",
 						"file-type"
