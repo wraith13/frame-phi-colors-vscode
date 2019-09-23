@@ -251,7 +251,7 @@ export module FramePhiColors
     };
 
     const hash = (source: string): number =>
-        source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 8191);
+        source.split("").map(i => i.codePointAt(0) || 0).reduce((a, b) => (a *173 +b +((a & 0x5555) >>> 5)) & 181);
 
     let rootWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
