@@ -9,3 +9,5 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.DS_Store
+images/phihex.1024.png
+images/phihex.ico

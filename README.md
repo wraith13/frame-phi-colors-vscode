@@ -4,11 +4,27 @@
 
 ⚠️ This extension automatically and frequently edits settings.json.
 
-This extension colors the frame in various ways. It is too ambitious and may be very annoying.
-
-## Features
-
 This extension automatically colors the title bar, activity bar, and status bar.
+
+![screenshot](images/screenshot.png)
+
+## Coloring Style
+
+### posi-light
+
+![posi-light](images/posi-light.png)
+
+### posi-dark
+
+![posi-dark](images/posi-dark.png)
+
+### nega-light
+
+![nega-light](images/nega-light.png)
+
+### nega-dark
+
+![nega-dark](images/nega-dark.png)
 
 ## Tutorial
 
@@ -18,13 +34,17 @@ Show extension side bar within VS Code(Mac:<kbd>Command</kbd>+<kbd>Shift</kbd>+<
 
 ### 1. 🌈 Colors frame
 
-Open text files or folders. The frame color changes automatically.
+Open folders and text files. The frame color changes automatically.
 
 ### 2. 🔧 Next step
 
 You can change [settings](#extension-settings) by `settings.json`.
 
 Enjoy!
+
+## Commands
+
+This extension has no commands.
 
 ## Extension Settings
 
