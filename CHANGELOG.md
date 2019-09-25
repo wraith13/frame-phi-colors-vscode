@@ -3,7 +3,13 @@ All notable changes to the "frame-phi-colors" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## 1.0.0 - 2019-09-2?
+## 1.0.1 - 2019-09-25
+
+### Fixed
+
+- Corrected mistakes in setting item names on README.
+
+## 1.0.0 - 2019-09-23
 
 ### Added
 

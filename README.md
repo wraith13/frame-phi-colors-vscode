@@ -50,17 +50,17 @@ This extension has no commands.
 
 This extension contributes the following settings by [`settings.json`](https://code.visualstudio.com/docs/customization/userandworkspace#_creating-user-and-workspace-settings)( Mac: <kbd>Command</kbd>+<kbd>,</kbd>, Windows / Linux: <kbd>File</kbd> -> <kbd>Preferences</kbd> -> <kbd>User Settings</kbd> ):
 
-* `framePhiColors.applyScope.description`: directory conditions for automatic frame coloring
-* `framePhiColors.baseColor.description`: arranges and colors based on this color. ( #RRGGBB )
-* `framePhiColors.titleBarColorSource.description`: source to arrange title bar colors
-* `framePhiColors.activityBarColorSource.description`: source to activity title bar colors
-* `framePhiColors.statusBarColorSource.description`: source to activity status bar colors
-* `framePhiColors.statusBarDebuggingColorSource.description`: source to arrange status bar color while debugging
-* `framePhiColors.titleBarColoringStyle.description`: title bar coloring style
-* `framePhiColors.activityBarColoringStyle.description`: activity bar coloring style
-* `framePhiColors.statusBarColoringStyle.description`: status bar coloring style
-* `framePhiColors.statusBarDebuggingColoringStyle.description`: status bar coloring style while debugging
-* `framePhiColors.statusBarNoFolderColoringStyle.description`: status bar coloring style when folder is not open
+* `framePhiColors.applyScope`: directory conditions for automatic frame coloring
+* `framePhiColors.baseColor`: arranges and colors based on this color. ( #RRGGBB )
+* `framePhiColors.titleBarColorSource`: source to arrange title bar colors
+* `framePhiColors.activityBarColorSource`: source to activity title bar colors
+* `framePhiColors.statusBarColorSource`: source to activity status bar colors
+* `framePhiColors.statusBarDebuggingColorSource`: source to arrange status bar color while debugging
+* `framePhiColors.titleBarColoringStyle`: title bar coloring style
+* `framePhiColors.activityBarColoringStyle`: activity bar coloring style
+* `framePhiColors.statusBarColoringStyle`: status bar coloring style
+* `framePhiColors.statusBarDebuggingColoringStyle`: status bar coloring style while debugging
+* `framePhiColors.statusBarNoFolderColoringStyle`: status bar coloring style when folder is not open
 
 ## Release Notes
 
