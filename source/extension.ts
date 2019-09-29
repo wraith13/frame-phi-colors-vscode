@@ -444,10 +444,10 @@ export module FramePhiColors
                 configBufferSet,
                 titleBarColor.source,
                 [
-                    new ColorItem("titleBar.activeForeground", titleBarColor.hash ? [titleBarColor.generateForegroundColor]: null),
-                    new ColorItem("titleBar.activeBackground", titleBarColor.hash ? [titleBarColor.generateBackgroundColor]: null),
-                    new ColorItem("titleBar.inactiveForeground", titleBarColor.hash ? [titleBarColor.generateForegroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
-                    new ColorItem("titleBar.inactiveBackground", titleBarColor.hash ? [titleBarColor.generateBackgroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
+                    new ColorItem("titleBar.activeForeground", null !== titleBarColor.hash ? [titleBarColor.generateForegroundColor]: null),
+                    new ColorItem("titleBar.activeBackground", null !== titleBarColor.hash ? [titleBarColor.generateBackgroundColor]: null),
+                    new ColorItem("titleBar.inactiveForeground", null !== titleBarColor.hash ? [titleBarColor.generateForegroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
+                    new ColorItem("titleBar.inactiveBackground", null !== titleBarColor.hash ? [titleBarColor.generateBackgroundColor, makeArranger(0, 1, titleBarColor.mode.mainColorDirection)]: null),
                 ]
             );
             const activityBarColor = getConfigAndPallet(activityBarColorSource, activityBarColoringStyle);
@@ -456,11 +456,11 @@ export module FramePhiColors
                 configBufferSet,
                 activityBarColor.source,
                 [
-                    new ColorItem("activityBar.foreground", activityBarColor.hash ? [activityBarColor.generateForegroundColor]: null),
-                    new ColorItem("activityBar.background", activityBarColor.hash ? [activityBarColor.generateBackgroundColor]: null),
-                    new ColorItem("activityBar.inactiveForeground", activityBarColor.hash ? [activityBarColor.generateForegroundColor, makeArranger(-0.1, 0, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 3: -4))]: null),
-                    new ColorItem("activityBarBadge.foreground", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *5)]: null),
-                    new ColorItem("activityBarBadge.background", activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
+                    new ColorItem("activityBar.foreground", null !== activityBarColor.hash ? [activityBarColor.generateForegroundColor]: null),
+                    new ColorItem("activityBar.background", null !== activityBarColor.hash ? [activityBarColor.generateBackgroundColor]: null),
+                    new ColorItem("activityBar.inactiveForeground", null !== activityBarColor.hash ? [activityBarColor.generateForegroundColor, makeArranger(-0.1, 0, activityBarColor.mode.mainColorDirection *(activityBarColor.mode.isNegative ? 3: -4))]: null),
+                    new ColorItem("activityBarBadge.foreground", null !== activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *5)]: null),
+                    new ColorItem("activityBarBadge.background", null !== activityBarColor.hash ? [makeArranger(activityBarColor.hash +0.2, 0.5, 1.0), makeArranger(0, 0, activityBarColor.mode.mainColorDirection *0)]: null),
                 ]
             );
             const statusBarColor = getConfigAndPallet(statusBarColorSource, statusBarColoringStyle);
@@ -469,11 +469,11 @@ export module FramePhiColors
                 configBufferSet,
                 statusBarColor.source,
                 [
-                    new ColorItem("statusBar.foreground", statusBarColor.hash ? [statusBarColor.generateForegroundColor]: null),
-                    new ColorItem("statusBar.background", statusBarColor.hash ? [statusBarColor.generateBackgroundColor]: null),
-                    new ColorItem("statusBarItem.hoverBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *-3)]: null),
-                    new ColorItem("statusBarItem.remoteForeground", statusBarColor.hash ? [statusBarColor.generateForegroundColor, makeArranger(0.2)]: null),
-                    new ColorItem("statusBarItem.remoteBackground", statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0.2)]: null),
+                    new ColorItem("statusBar.foreground", null !== statusBarColor.hash ? [statusBarColor.generateForegroundColor]: null),
+                    new ColorItem("statusBar.background", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor]: null),
+                    new ColorItem("statusBarItem.hoverBackground", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *-3)]: null),
+                    new ColorItem("statusBarItem.remoteForeground", null !== statusBarColor.hash ? [statusBarColor.generateForegroundColor, makeArranger(0.2)]: null),
+                    new ColorItem("statusBarItem.remoteBackground", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0.2)]: null),
                 ]
             );
             const statusBarDebuggingColor = getConfigAndPallet(statusBarDebuggingColorSource, statusBarDebuggingColoringStyle);
@@ -482,8 +482,8 @@ export module FramePhiColors
                 configBufferSet,
                 statusBarDebuggingColor.source,
                 [
-                    new ColorItem("statusBar.debuggingForeground", statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateForegroundColor]: null),
-                    new ColorItem("statusBar.debuggingBackground", statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateBackgroundColor]: null),
+                    new ColorItem("statusBar.debuggingForeground", null !== statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateForegroundColor]: null),
+                    new ColorItem("statusBar.debuggingBackground", null !== statusBarDebuggingColor.hash ? [statusBarDebuggingColor.generateBackgroundColor]: null),
                 ]
             );
             const statusBarNoFolderColor = getPallet
