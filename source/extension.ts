@@ -133,7 +133,7 @@ export module FramePhiColors
         },
         "workspace":
         {
-            getHashSource: () => getWorkspaceUriString(),
+            getHashSource: () => getWorkspaceUri(),
             configurationTarget: vscode.ConfigurationTarget.Workspace,
         },
         "workspace-name":
@@ -255,7 +255,6 @@ export module FramePhiColors
 
     let rootWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceUri = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri: null;
-    const getWorkspaceUriString = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri.toString(): null;
     const getWorkspaceName = () => rootWorkspaceFolder ? rootWorkspaceFolder.uri.toString().replace(/^.*[\\\/]([^\\\/]+)$/, "$1"): null;
     let currentWorkspaceFolder: vscode.WorkspaceFolder | undefined;
     const getWorkspaceFolderUri = () => currentWorkspaceFolder ? currentWorkspaceFolder.uri: null;
