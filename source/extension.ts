@@ -470,7 +470,7 @@ export module FramePhiColors
                 [
                     new ColorItem("statusBar.foreground", null !== statusBarColor.hash ? [statusBarColor.generateForegroundColor]: null),
                     new ColorItem("statusBar.background", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor]: null),
-                    new ColorItem("statusBarItem.hoverBackground", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0, 0, statusBarColor.mode.mainColorDirection *-3)]: null),
+                    new ColorItem("statusBarItem.hoverBackground", null !== statusBarColor.hash ? [makeArranger((statusBarColor.hash || 0) +0.1, -1, -1)]: null),
                     new ColorItem("statusBarItem.remoteForeground", null !== statusBarColor.hash ? [statusBarColor.generateForegroundColor, makeArranger(0.2)]: null),
                     new ColorItem("statusBarItem.remoteBackground", null !== statusBarColor.hash ? [statusBarColor.generateBackgroundColor, makeArranger(0.2)]: null),
                 ]
