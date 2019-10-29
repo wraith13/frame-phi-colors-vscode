@@ -3,6 +3,12 @@ All notable changes to the "frame-phi-colors" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.1.0 - 2019-10-28
+
+### Fixed
+
+- Adjusted `statusBarItem.hoverBackground`. ( Because the text was completely unreadable when combined with `statusBar.debuggingForeground`. )
+
 ## 1.0.3 - 2019-09-30
 
 ### Fixed
