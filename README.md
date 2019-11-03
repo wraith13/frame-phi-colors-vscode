@@ -4,6 +4,8 @@
 
 ⚠️ This extension automatically and frequently edits settings.json.
 
+⚠️ It is necessary to delete the settings manually when uninstalling. see [Uninstall Notes](#uninstall-notes).
+
 This extension automatically colors the title bar, activity bar, and status bar.
 
 ![screenshot](images/screenshot.png)
@@ -61,6 +63,13 @@ This extension contributes the following settings by [`settings.json`](https://c
 * `framePhiColors.statusBarColoringStyle`: status bar coloring style
 * `framePhiColors.statusBarDebuggingColoringStyle`: status bar coloring style while debugging
 * `framePhiColors.statusBarNoFolderColoringStyle`: status bar coloring style when folder is not open
+
+## Uninstall Notes
+
+Frame Phi Colors edits workbench.colorCustomizations in settings.json( both user and workspace ).
+Please delete workbench.colorCustomizations from settings.json( both user and workspace ) when you uninstalled this extension.
+
+cf. https://code.visualstudio.com/docs/getstarted/settings ( You need to edit the JSON files. )
 
 ## Release Notes
 
