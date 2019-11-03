@@ -66,8 +66,8 @@ This extension contributes the following settings by [`settings.json`](https://c
 
 ## Uninstall Notes
 
-Frame Phi Colors edits workbench.colorCustomizations in settings.json( both user and workspace ).
-Please delete workbench.colorCustomizations from settings.json( both user and workspace ) when you uninstalled this extension.
+Frame Phi Colors edits `workbench.colorCustomizations` in settings.json( both user and workspace ).
+Please delete `workbench.colorCustomizations` from settings.json( both user and workspace ) when you uninstalled this extension.
 
 cf. https://code.visualstudio.com/docs/getstarted/settings ( You need to edit the JSON files. )
 
