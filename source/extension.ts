@@ -289,7 +289,22 @@ export module FramePhiColors
         constructor(public configurationTarget: vscode.ConfigurationTarget, public key: string)
         {
             this.config = vscode.workspace.getConfiguration(undefined, getConfigurationUri(configurationTarget));
-            this.value = this.config.get(this.key, { });
+            const values = this.config.inspect(this.key);
+            switch(configurationTarget)
+            {
+            case vscode.ConfigurationTarget.Global:
+                this.value = values?.globalValue ?? { };
+                break;
+            case vscode.ConfigurationTarget.Workspace:
+                this.value = values?.workspaceValue ?? { };
+                break;
+            case vscode.ConfigurationTarget.WorkspaceFolder:
+                this.value = values?.workspaceFolderValue ?? { };
+                break;
+            default:
+                this.value = values?.defaultValue ?? { };
+                break;
+            }
         }
         update = () =>
         {

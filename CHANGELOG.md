@@ -3,6 +3,12 @@ All notable changes to the "frame-phi-colors" extension will be documented in th
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.1.2 - 2020-07-04
+
+### Fixed
+
+- Fixed an issue that propagated configurations for different targets.
+
 ## 1.1.1 - 2019-12-10
 
 ### Added
